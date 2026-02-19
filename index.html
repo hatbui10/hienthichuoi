@@ -5,45 +5,79 @@
 <title>Highlight Next</title>
 
 <style>
+
+
+
+
 body{
-    font-family:Consolas, monospace;
+    min-height:100vh;
+    font-family:'Segoe UI',sans-serif;
+    background:linear-gradient(135deg,#1f1c2c,#928dab);
     display:flex;
     flex-direction:column;
+    justify-content:flex-start; /* Đưa lên trên */
     align-items:center;
-    justify-content:center;
-    height:100vh;
-    background:#111;
+    padding-top:30px; /* Cách mép trên 30px */
     color:white;
 }
 
-textarea{
-    width:300px;
-    height:300px;
-    font-size:18px;
-    padding:10px;
-    resize:none;
-    border-radius:10px;
-    border:2px solid #00ffcc;
-    background:#000;
-    color:#00ffcc;
+
+/* Mỗi dòng */
+.line{
+    padding:4px 12px;
+    border-radius:8px;
+    transition:0.3s;
 }
 
-button{
-    margin-top:20px;
-    padding:10px 25px;
-    font-size:18px;
-    cursor:pointer;
-    border:none;
-    border-radius:8px;
-    background:#00ffcc;
-    color:#111;
+/* Dòng đang chọn */
+.active{
+    background:linear-gradient(45deg,#00c853,#00e676);
+    color:#000;
+    font-weight:bold;
 }
+
+/* Nút */
+button{
+    margin-top:30px;
+    padding:14px 40px;
+    font-size:20px;
+    border:none;
+    border-radius:30px;
+    background:linear-gradient(45deg,#00c853,#00e676);
+    cursor:pointer;
+    color:black;
+    transition:0.3s;
+}
+
+button:hover{
+    transform:scale(1.08);
+}
+
+textarea{
+    width:350px;
+    height:500px;          /* Chiều cao 300px */
+    font-size:20px;        /* Chữ nhỏ lại */
+    padding:12px;
+    resize:none;
+    border-radius:12px;
+    border:2px solid #00c853;
+    background:#0f2027;
+    color:#00e676;
+    line-height:1.6;
+    box-shadow:0 0 25px rgba(0,0,0,0.4);
+}
+
+
+
 </style>
 </head>
 
 <body>
 
+<body>
+
 <textarea id="area" readonly></textarea>
+
 <button onclick="nextLine()">Next</button>
 
 <script>
@@ -73,24 +107,18 @@ let index = 0;
 
 function nextLine(){
 
-    const lines = area.value.split("\n");
-
-    // Reset lại nội dung
-    area.value = data.join("\n");
-
-    // Tính vị trí ký tự bắt đầu của dòng cần tô
     let start = 0;
+
     for(let i = 0; i < index; i++){
-        start += lines[i].length + 1;
+        start += data[i].length + 1;
     }
 
-    let end = start + lines[index].length;
+    let end = start + data[index].length;
 
     area.focus();
     area.setSelectionRange(start, end);
 
     index++;
-
     if(index >= data.length){
         index = 0;
     }
@@ -99,3 +127,4 @@ function nextLine(){
 
 </body>
 </html>
+
