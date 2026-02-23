@@ -83,6 +83,21 @@ body {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
 }
+
+/* Khi còn 5 giây */
+.danger {
+    background: linear-gradient(135deg, #7f1d1d, #ef4444) !important;
+    animation: pulse 0.6s infinite alternate;
+}
+
+@keyframes pulse {
+    from { transform: scale(1); }
+    to { transform: scale(1.08); }
+}
+
+
+
+
 </style>
 </head>
 
@@ -93,7 +108,7 @@ body {
 <div class="wrapper">
 
     <div id="contentBox" class="card"></div>
-    <div id="timeBox" class="card">100</div>
+    <div id="timeBox" class="card">65</div>
 
     <div class="buttons">
         <button id="startBtn">Bắt đầu</button>
@@ -106,12 +121,12 @@ body {
 
 <script>
 const data = [
-  { text: "1. Gặp A dùng 1-A", time: 105 },
-  { text: "2. Gặp A dùng A", time: 105 },
-  { text: "3. Gặp A dùng A", time: 105 },
-  { text: "4. Gặp A dùng 1-A", time: 105 },
-  { text: "5. Gặp A dùng 1-A", time: 105 },
-  { text: "6. Gặp A dùng A", time: 105 }
+  { text: "1. Gặp A dùng A", time: 65 },
+  { text: "2. Gặp A dùng 1-A", time: 65 },
+  { text: "3. Gặp A dùng A", time: 65 },
+  { text: "4. Gặp A dùng A", time: 65 },
+  { text: "5. Gặp A dùng 1-A", time: 65 },
+  { text: "6. Gặp A dùng A", time: 65 }
 ];
 
 const contentBox = document.getElementById("contentBox");
@@ -137,19 +152,77 @@ window.onload = () => {
     loadItem(0);
 };
 
+
+// Tạo tiếng tích tắc bằng Web Audio API
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+function playTick() {
+    const oscillator = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+
+    oscillator.type = "square";
+    oscillator.frequency.value = 1000; // cao độ
+    gainNode.gain.value = 0.1; // âm lượng
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+
+    oscillator.start();
+    oscillator.stop(audioCtx.currentTime + 0.05);
+}
+
+
+
 function startTimer() {
     if (interval) return;
 
     interval = setInterval(() => {
-        countdown--;
-        timeBox.textContent = countdown;
+    countdown--;
+    timeBox.textContent = countdown;
 
-        if (countdown <= 0) {
-            index = (index + 1) % data.length;
-            loadItem(index);
-        }
-    }, 1000);
+    if (countdown <= 10 && countdown > 0) {
+        timeBox.classList.add("danger");
+        playTick();
+    } else {
+        timeBox.classList.remove("danger");
+    }
+
+    if (countdown <= 0) {
+    playEndSound(); // thêm dòng này
+    timeBox.classList.remove("danger");
+    index = (index + 1) % data.length;
+    loadItem(index);
 }
+
+}, 1000);
+}
+
+
+
+function playEndSound() {
+    const oscillator = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+
+    oscillator.type = "sawtooth"; // khác với tick
+    oscillator.frequency.value = 300; // trầm hơn
+    gainNode.gain.value = 0.2;
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+
+    oscillator.start();
+
+    // giảm âm dần cho mượt
+    gainNode.gain.exponentialRampToValueAtTime(
+        0.001,
+        audioCtx.currentTime + 0.6
+    );
+
+    oscillator.stop(audioCtx.currentTime + 0.6);
+}
+
+
+
 
 function resetAll() {
     clearInterval(interval);
@@ -164,7 +237,3 @@ resetBtn.addEventListener("click", resetAll);
 
 </body>
 </html>
-
-
-
-
