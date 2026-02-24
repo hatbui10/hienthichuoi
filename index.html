@@ -19,7 +19,7 @@ body {
 }
 .wrapper {
     text-align: center;
-    width: 420px;
+    width: 600px;
 }
 
 .card {
@@ -27,11 +27,11 @@ body {
     backdrop-filter: blur(10px);
     border-radius: 15px;
     padding: 15px;
-    margin-bottom: 20px;
+    margin: 20px auto;
     box-shadow: 0 10px 25px rgba(0,0,0,0.4);
     transition: 0.4s ease;
     background: #254F22;
-        display: flex;
+    display: flex;
     justify-content: center;  /* căn ngang */
     align-items: center;      /* căn dọc */
     text-align: center;       /* căn text */
@@ -95,6 +95,23 @@ body {
     to { transform: scale(1.08); }
 }
 
+.card1 {
+  letter-spacing: 4px; /* tăng số này nếu muốn giãn hơn */
+  background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 15px;
+    margin: 20px auto;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+    transition: 0.4s ease;
+    background: #254F22;
+    display: flex;
+    justify-content: center;  /* căn ngang */
+    align-items: center;      /* căn dọc */
+    text-align: center;       /* căn text */
+    font-size: 20px;
+
+}
 
 
 
@@ -106,10 +123,14 @@ body {
 <body>
 
 <div class="wrapper">
+    
+    <div class="card1">  Gặp 0-2-4 DÙNG 0 </div>
+ 
+    <div class="card1">  Gặp  A *** (1 - A) *** A *** (1 - A)  DÙNG A </div>
 
     <div id="contentBox" class="card"></div>
-    <div id="timeBox" class="card">110</div>
-
+    <div id="timeBox" class="card">65</div>
+    
     <div class="buttons">
         <button id="startBtn">Bắt đầu</button>
         <button id="resetBtn">Reset</button>
@@ -121,12 +142,11 @@ body {
 
 <script>
 const data = [
-  { text: "1. Gặp A dùng 1-A", time: 110 },
-  { text: "2. Gặp A dùng A", time: 110 },
-  { text: "3. Gặp A dùng A", time: 110 },
-  { text: "4. Gặp A dùng A", time: 110 },
-  { text: "5. Gặp A dùng 1-A", time: 110 },
-  { text: "6. Gặp A dùng A", time: 110 }
+  { text: "1. Gặp A-A dùng 1-A    ( 1 )", time: 35 },
+  { text: "2. Gặp A-A-A dùng 1-A   ( 2 )", time: 35 },
+  { text: "3. Gặp A-A-A-A :   (BỎ QUA) ", time: 35 },
+  { text: "4. Gặp A-A-A-A-A dùng A   ( 5 )", time: 35 }
+  
 ];
 
 const contentBox = document.getElementById("contentBox");
@@ -237,5 +257,3 @@ resetBtn.addEventListener("click", resetAll);
 
 </body>
 </html>
-
-
