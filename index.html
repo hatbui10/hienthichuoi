@@ -11,8 +11,8 @@ body {
   font-family: Arial, sans-serif;
   display: flex;
   justify-content: center;
-  align-items: flex-start;   /* Quan trọng: đưa lên trên */
-  padding-top: 30px;         /* Cách mép trên một chút cho đỡ ngộp */
+  align-items: flex-start;
+  padding-top: 30px;
   min-height: 100vh;
 }
 
@@ -25,27 +25,31 @@ body {
   text-align: center;
 }
 
-
-  
 h2 {
   color: white;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
 }
 
 input {
   padding: 15px;
   font-size: 22px;
-  width: 160px;
+  width: 170px;
   text-align: center;
   border-radius: 12px;
   border: none;
   outline: none;
-  margin: 10px;
+  margin: 8px;
   transition: 0.3s;
 }
 
 #numberInput {
   background: #ffffff;
+}
+
+#copyInput {
+  background: #222;
+  color: #00ffff;
+  font-weight: bold;
 }
 
 #resultInput {
@@ -82,21 +86,29 @@ input {
 <div class="container">
   <h2>Nhập 3 chữ số</h2>
 
+  <!-- Ô nhập -->
   <input 
     type="tel"
     id="numberInput"
     maxlength="3"
     inputmode="numeric"
     pattern="[0-9]*"
-  placeholder="Nhập số..."
-    oninput="checkNumber()"
+    placeholder="Nhập số..."
   >
-
-
-
 
   <br>
 
+  <!-- Ô copy giá trị -->
+  <input 
+    type="text"
+    id="copyInput"
+    readonly
+    placeholder="Giá trị vừa nhập"
+  >
+
+  <br>
+
+  <!-- Ô kết quả -->
   <input 
     type="text"
     id="resultInput"
@@ -105,85 +117,71 @@ input {
   >
 </div>
 
-
 <script>
+
 const data = [
-  "865", "605",
-  "655", "260",
-  "559", "553",
-  "909", "969",
-  "772", "896",
-  "728", "389",
-  "286", "975",
-  "464", "597",
-  "700", "959",
-  "068", "295",
-  "007", "529",
-  "434", "552",
-  "346", "002",
-  "765", "278",
-  "090", "027",
-  "908", "402",
-  "301", "040",
-  "176", "331",
-  "017", "824",
-  "132", "043",
-  "659", "430",
-  "599", "309",
-  "555", "098",
-  "389", "989",
-  "896", "898", "756", "563", "636", "365", "515", "154", "549", "947", "977", "041", "418", "186", "869", "695", "543", "437", "777", "773", "735",
-
-
- "730", "303", "039", "213", "387", "871", "718", "186", "982", "823", "230", "917", "894", "329", "291", "355", "355", "355", "355", "355", "355", "355", "355", "355", "355", "355", "355", "355", "355", "355", "355",
-
-
-
-  "538",
-  "076",
-  "646",
-  "995",
-  "999",
-  "991",
-  "918",
-  "592"
+  "865","605","655","260","559","553","909","969","772","896",
+  "728","389","286","975","464","597","700","959","068","295",
+  "007","529","434","552","346","002","765","278","090","027",
+  "908","402","301","040","176","331","017","824","132","043",
+  "659","430","599","309","555","098","389","989","896","898",
+  "756","563","636","365","515","154","549","947","977","041",
+  "418","186","869","695","543","437","777","773","735",
+  "730","303","039","213","387","871","718","186","982","823",
+  "230","917","894","329","291","355","538","076","646",
+  "995","999","991","918","592"
 ];
 
-  
+const input = document.getElementById("numberInput");
+const copyBox = document.getElementById("copyInput");
+const result = document.getElementById("resultInput");
 
-function checkNumber() {
-  const input = document.getElementById("numberInput").value;
-  const result = document.getElementById("resultInput");
+input.addEventListener("input", function() {
 
-  result.classList.remove("success", "fail");
+  this.value = this.value.replace(/[^0-9]/g, "");
 
-  if (input.length === 3) {
-    if (data.includes(input)) {
+  if (this.value.length === 3) {
+
+    const value = this.value;
+
+    // Copy lên ô phía trên
+    copyBox.value = value;
+
+    result.classList.remove("success", "fail");
+
+    // Kiểm tra const
+    if (data.includes(value)) {
       result.value = "1";
       result.classList.add("success");
     } else {
       result.value = "0";
       result.classList.add("fail");
     }
-  } else {
-    result.value = "";
+
+    // Reset để nhập tiếp
+    setTimeout(() => {
+      input.value = "";
+      input.focus();
+    }, 300);
   }
-}
+});
 
+window.addEventListener("load", function () {
 
-  window.onload = function() {
-  document.getElementById("numberInput").focus();
-};
+  const input = document.getElementById("numberInput");
+
+  // Focus khi load (có thể không bật bàn phím)
+  input.focus();
+
+  // Khi người dùng chạm màn hình lần đầu → bật chắc chắn
+  document.body.addEventListener("touchstart", function enableFocus() {
+    input.focus();
+    document.body.removeEventListener("touchstart", enableFocus);
+  });
+
+});
+
 </script>
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
