@@ -2,77 +2,81 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kiểm tra 3 chữ số</title>
 
 <style>
+* {
+  box-sizing: border-box;
+}
+
 body {
-  margin: 0;
-  background: linear-gradient(135deg, #1e1e2f, #2b1055);
-  font-family: Arial, sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;   /* Quan trọng: đưa lên trên */
-  padding-top: 30px;         /* Cách mép trên một chút cho đỡ ngộp */
-  min-height: 100vh;
+  margin: 0;
+  background: linear-gradient(135deg, #1e1e2f, #2b1055);
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 40px;
+  min-height: 100vh;
 }
 
 .container {
-  background: rgba(255,255,255,0.05);
-  padding: 30px;
-  border-radius: 20px;
-  backdrop-filter: blur(15px);
-  box-shadow: 0 0 40px rgba(0,255,255,0.3);
-  text-align: center;
+  background: rgba(20, 20, 40, 0.9);
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 0 40px rgba(0,255,255,0.3);
+  text-align: center;
+  width: 90%;
+  max-width: 350px;
 }
 
-
-  
 h2 {
-  color: white;
-  margin-bottom: 25px;
+  color: #ffffff;
+  margin-bottom: 25px;
 }
 
 input {
-  padding: 15px;
-  font-size: 22px;
-  width: 160px;
-  text-align: center;
-  border-radius: 12px;
-  border: none;
-  outline: none;
-  margin: 10px;
-  transition: 0.3s;
+  padding: 15px;
+  font-size: 22px;
+  width: 100%;
+  text-align: center;
+  border-radius: 12px;
+  border: none;
+  outline: none;
+  margin-bottom: 15px;
+  transition: 0.3s;
 }
 
 #numberInput {
-  background: #ffffff;
+  background: #ffffff;
 }
 
 #resultInput {
-  background: #111;
-  color: white;
-  font-weight: bold;
+  background: #111;
+  color: #ffffff;
+  font-weight: bold;
 }
 
 .success {
-  box-shadow: 0 0 20px #00ff99;
-  background: #00ff99 !important;
-  color: black !important;
+  box-shadow: 0 0 20px #00ff99;
+  background: #00ff99 !important;
+  color: black !important;
 }
 
 .fail {
-  animation: shake 0.3s;
-  box-shadow: 0 0 20px #ff0066;
-  background: #ff0066 !important;
-  color: white !important;
+  animation: shake 0.3s;
+  box-shadow: 0 0 20px #ff0066;
+  background: #ff0066 !important;
+  color: white !important;
 }
 
 @keyframes shake {
-  0% { transform: translateX(0); }
-  25% { transform: translateX(-5px); }
-  50% { transform: translateX(5px); }
-  75% { transform: translateX(-5px); }
-  100% { transform: translateX(0); }
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+  100% { transform: translateX(0); }
 }
 </style>
 </head>
@@ -80,106 +84,76 @@ input {
 <body>
 
 <div class="container">
-  <h2>Nhập 3 chữ số</h2>
+  <h2>Nhập 3 chữ số</h2>
 
-  <input 
-    type="tel"
-    id="numberInput"
-    maxlength="3"
-    inputmode="numeric"
-    placeholder="___"
-    oninput="checkNumber()"
-  >
+  <input 
+    type="tel"
+    id="numberInput"
+    maxlength="3"
+    inputmode="numeric"
+    placeholder="___"
+  >
 
-  <br>
-
-  <input 
-    type="text"
-    id="resultInput"
-    readonly
-    placeholder="Kết quả"
-  >
+  <input 
+    type="text"
+    id="resultInput"
+    readonly
+    placeholder="Kết quả"
+  >
 </div>
 
 <script>
-const data = [
+const data = new Set([
 "002","007","008","011","017","027","034","039","040","041","043","044","068","070","076","090","098",
 "006","072","080","071",
-
-
 "117","131","132","138","154","155","176","177","186","192",
 "122","136","198","152","115","129","124","137","181","144","195","165",
-
-
 "213","230","244","260","275","276","278","286","291","295","283","273","282",
-"210","207","265","297","229","295","205",
+"210","207","265","297","229","205",
 "263","246","290","249","274",
-
-
-
 "301","303","309","310","329","331","346","349","365","371","375","384","387","389",
 "300","319","304","322","311","327","377","437","324",
-
-
 "402","403","415","418","430","431","434","437","442","445","451","454","464","465","484","496","494","410","469","457",
-
-"412","432","400","437","463",
-
-
-
+"412","432","400","463",
 "503","515","524","529","538","549","552","553","555","559","563","582","592","597",
 "512","532","575","594","547","506","576","546","513","580",
-
-
-
 "605","610","611","613","615","636","645","646","650","652","653","655","659","695",
 "631","634","654","612","658","690","670","647",
-
-
 "700","701","710","718","728","730","735","745","752","753","756","761","765","772","773","777",
-"721","726","783","782","733","774","740","745","778","788","746",
-
-
-
-
+"721","726","783","782","733","774","740","778","788","746",
 "800","823","858","865","869","872","880","888","894","896","898",
 "832","829","812","820","844","804","854","856","808","842",
-
-
-
 "908","909","911","917","918","924","931","947","959","969","975","977","980","982","987","989","991","995","999",
 "988","978","957","912","951","985"
+]);
 
+const numberInput = document.getElementById("numberInput");
+const resultInput = document.getElementById("resultInput");
 
+numberInput.addEventListener("input", function() {
 
+  // chỉ cho nhập số
+  this.value = this.value.replace(/\D/g, "");
 
-];
+  resultInput.classList.remove("success", "fail");
 
-function checkNumber() {
-  const input = document.getElementById("numberInput").value;
-  const result = document.getElementById("resultInput");
+  if (this.value.length === 3) {
+    if (data.has(this.value)) {
+      resultInput.value = "1";
+      resultInput.classList.add("success");
+    } else {
+      resultInput.value = "0";
+      resultInput.classList.add("fail");
+    }
+  } else {
+    resultInput.value = "";
+  }
+});
 
-  result.classList.remove("success", "fail");
-
-  if (input.length === 3) {
-    if (data.includes(input)) {
-      result.value = "1";
-      result.classList.add("success");
-    } else {
-      result.value = "0";
-      result.classList.add("fail");
-    }
-  } else {
-    result.value = "";
-  }
-}
-
-
-window.onload = function() {
-  document.getElementById("numberInput").focus();
-};
+document.addEventListener("DOMContentLoaded", function() {
+  numberInput.focus();
+});
 </script>
 
 </body>
 </html>
-
