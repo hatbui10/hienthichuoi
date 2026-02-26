@@ -6,77 +6,73 @@
 
 <style>
 body {
-  margin: 0;
-  background: linear-gradient(135deg, #1e1e2f, #2b1055);
-  font-family: Arial, sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding-top: 30px;
-  min-height: 100vh;
+  margin: 0;
+  background: linear-gradient(135deg, #1e1e2f, #2b1055);
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;   /* Quan trọng: đưa lên trên */
+  padding-top: 30px;         /* Cách mép trên một chút cho đỡ ngộp */
+  min-height: 100vh;
 }
 
 .container {
-  background: rgba(255,255,255,0.05);
-  padding: 30px;
-  border-radius: 20px;
-  backdrop-filter: blur(15px);
-  box-shadow: 0 0 40px rgba(0,255,255,0.3);
-  text-align: center;
+  background: rgba(255,255,255,0.05);
+  padding: 30px;
+  border-radius: 20px;
+  backdrop-filter: blur(15px);
+  box-shadow: 0 0 40px rgba(0,255,255,0.3);
+  text-align: center;
 }
 
+
+  
 h2 {
-  color: white;
-  margin-bottom: 20px;
+  color: white;
+  margin-bottom: 25px;
 }
 
 input {
-  padding: 15px;
-  font-size: 22px;
-  width: 170px;
-  text-align: center;
-  border-radius: 12px;
-  border: none;
-  outline: none;
-  margin: 8px;
-  transition: 0.3s;
+  padding: 15px;
+  font-size: 22px;
+  width: 160px;
+  text-align: center;
+  border-radius: 12px;
+  border: none;
+  outline: none;
+  margin: 10px;
+  transition: 0.3s;
 }
 
 #numberInput {
-  background: #ffffff;
-}
-
-#copyInput {
-  background: #222;
-  color: #00ffff;
-  font-weight: bold;
+  background: #ffffff;
 }
 
 #resultInput {
-  background: #111;
-  color: white;
-  font-weight: bold;
+  background: #111;
+  color: white;
+  font-weight: bold;
 }
 
 .success {
-  box-shadow: 0 0 20px #00ff99;
-  background: #00ff99 !important;
-  color: black !important;
+  box-shadow: 0 0 20px #00ff99;
+  background: #00ff99 !important;
+  color: black !important;
 }
 
 .fail {
-  animation: shake 0.3s;
-  box-shadow: 0 0 20px #ff0066;
-  background: #ff0066 !important;
-  color: white !important;
+  animation: shake 0.3s;
+  box-shadow: 0 0 20px #ff0066;
+  background: #ff0066 !important;
+  color: white !important;
 }
 
 @keyframes shake {
-  0% { transform: translateX(0); }
-  25% { transform: translateX(-5px); }
-  50% { transform: translateX(5px); }
-  75% { transform: translateX(-5px); }
-  100% { transform: translateX(0); }
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+  100% { transform: translateX(0); }
 }
 </style>
 </head>
@@ -84,103 +80,96 @@ input {
 <body>
 
 <div class="container">
-  <h2>Nhập 3 chữ số</h2>
+  <h2>Nhập 3 chữ số</h2>
 
-  <!-- Ô nhập -->
-  <input 
-    type="tel"
-    id="numberInput"
-    maxlength="3"
-    inputmode="numeric"
-    pattern="[0-9]*"
-    placeholder="Nhập số..."
-  >
+  <input 
+    type="tel"
+    id="numberInput"
+    maxlength="3"
+    inputmode="numeric"
+    placeholder="___"
+    oninput="checkNumber()"
+  >
 
-  <br>
+  <br>
 
-  <!-- Ô copy giá trị -->
-  <input 
-    type="text"
-    id="copyInput"
-    readonly
-    placeholder="Giá trị vừa nhập"
-  >
-
-  <br>
-
-  <!-- Ô kết quả -->
-  <input 
-    type="text"
-    id="resultInput"
-    readonly
-    placeholder="Kết quả"
-  >
+  <input 
+    type="text"
+    id="resultInput"
+    readonly
+    placeholder="Kết quả"
+  >
 </div>
 
 <script>
-
 const data = [
-  "865","605","655","260","559","553","909","969","772","896",
-  "728","389","286","975","464","597","700","959","068","295",
-  "007","529","434","552","346","002","765","278","090","027",
-  "908","402","301","040","176","331","017","824","132","043",
-  "659","430","599","309","555","098","389","989","896","898",
-  "756","563","636","365","515","154","549","947","977","041",
-  "418","186","869","695","543","437","777","773","735",
-  "730","303","039","213","387","871","718","186","982","823",
-  "230","917","894","329","291","355","538","076","646",
-  "995","999","991","918","592"
+  "865", "605",
+  "655", "260",
+  "559", "553",
+  "909", "969",
+  "772", "896",
+  "728", "389",
+  "286", "975",
+  "464", "597",
+  "700", "959",
+  "068", "295",
+  "007", "529",
+  "434", "552",
+  "346", "002",
+  "765", "278",
+  "090", "027",
+  "908", "402",
+  "301", "040",
+  "176", "331",
+  "017", "824",
+  "132", "043",
+  "659", "430",
+  "599", "309",
+  "555", "098",
+  "389", "989",
+  "896", "898", "756", "563", "636", "365", "515", "154", "549", "947", "977", "041", "418", "186", "869", "695", "543", "437", "777", "773", "735",
+ "730", "303", "039", "213", "387", "871", "718", "186", "982", "823", "230", "917", "894", "329", "291", "451", "192", "653", "431", "745", "415", "213", "375", "645", "454", "752", "276", "761", "615", "155", "980",
+
+
+
+ "800", "008", "880", "888", "961", "613,", "138", "980", "980", "980", "980", "980", "980", "980", "980", "980", "980", "980", "980", "980", "980", "980", "980", "980", "980", "980", "980", "980", "980", "980", "980", "980", "980", "980", "980", "980", "980", "980", "980", "980", "980", "980", "980", "980", "980", "980", "980", "980",
+
+
+
+  "538",
+  "076",
+  "646",
+  "995",
+  "999",
+  "991",
+  "918",
+  "592"
 ];
 
-const input = document.getElementById("numberInput");
-const copyBox = document.getElementById("copyInput");
-const result = document.getElementById("resultInput");
 
-input.addEventListener("input", function() {
+function checkNumber() {
+  const input = document.getElementById("numberInput").value;
+  const result = document.getElementById("resultInput");
 
-  this.value = this.value.replace(/[^0-9]/g, "");
+  result.classList.remove("success", "fail");
 
-  if (this.value.length === 3) {
+  if (input.length === 3) {
+    if (data.includes(input)) {
+      result.value = "1";
+      result.classList.add("success");
+    } else {
+      result.value = "0";
+      result.classList.add("fail");
+    }
+  } else {
+    result.value = "";
+  }
+}
 
-    const value = this.value;
 
-    // Copy lên ô phía trên
-    copyBox.value = value;
-
-    result.classList.remove("success", "fail");
-
-    // Kiểm tra const
-    if (data.includes(value)) {
-      result.value = "1";
-      result.classList.add("success");
-    } else {
-      result.value = "0";
-      result.classList.add("fail");
-    }
-
-    // Reset để nhập tiếp
-    setTimeout(() => {
-      input.value = "";
-      input.focus();
-    }, 300);
-  }
-});
-
-window.addEventListener("load", function () {
-
-  const input = document.getElementById("numberInput");
-
-  // Focus khi load (có thể không bật bàn phím)
-  input.focus();
-
-  // Khi người dùng chạm màn hình lần đầu → bật chắc chắn
-  document.body.addEventListener("touchstart", function enableFocus() {
-    input.focus();
-    document.body.removeEventListener("touchstart", enableFocus);
-  });
-
-});
-
+window.onload = function() {
+  document.getElementById("numberInput").focus();
+};
 </script>
 
 </body>
