@@ -2,273 +2,124 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Timer Nội Dung</title>
+<title>Kiểm tra 3 chữ số</title>
 
 <style>
 body {
-    margin: 0;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;   /* đổi chỗ này */
-    padding-top: 20px;         /* nếu muốn sát hơn nữa thì giảm */
-    background: linear-gradient(135deg, #0f172a, #1e293b);
-    font-family: Arial, sans-serif;
-    color: white;
-}
-.wrapper {
-    text-align: center;
-    width: 600px;
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #1e1e2f, #2b1055);
+  font-family: Arial, sans-serif;
 }
 
-.card {
-    background: rgba(255,255,255,0.05);
-    backdrop-filter: blur(10px);
-    border-radius: 15px;
-    padding: 15px;
-    margin: 20px auto;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-    transition: 0.4s ease;
-    background: #254F22;
-    display: flex;
-    justify-content: center;  /* căn ngang */
-    align-items: center;      /* căn dọc */
-    text-align: center;       /* căn text */
-}
-
-
-#contentBox {
-    font-size: 40px;
-    min-height: 50px;
-}
-
-#timeBox {
-    font-size: 60px;
-    font-weight: bold;
-    color: #38bdf8;
-}
-
-
-.buttons {
-    display: flex;
-    justify-content: center;
-    gap: 50px;   /* khoảng cách giữa 2 nút */
-}
-
-
-.buttons button {
-    padding: 20px 35px;
-    border: none;
-    border-radius: 20px;
-    font-size: 30px;
-    cursor: pointer;
-    transition: 0.2s;
-}
-
-
-#startBtn { background: #7c3aed; color: white; }
-#resetBtn { background: #ef4444; color: white; }
-
-.buttons button:hover {
-    transform: scale(1.05);
-    opacity: 0.9;
-}
-
-.fade {
-    animation: fadeIn 0.4s ease;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* Khi còn 5 giây */
-.danger {
-    background: linear-gradient(135deg, #7f1d1d, #ef4444) !important;
-    animation: pulse 0.6s infinite alternate;
-}
-
-@keyframes pulse {
-    from { transform: scale(1); }
-    to { transform: scale(1.08); }
-}
-
-.card1 {
-  letter-spacing: 4px; /* tăng số này nếu muốn giãn hơn */
+.container {
   background: rgba(255,255,255,0.05);
-    backdrop-filter: blur(10px);
-    border-radius: 15px;
-    padding: 15px;
-    margin: 20px auto;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-    transition: 0.4s ease;
-    background: #254F22;
-    display: flex;
-    justify-content: center;  /* căn ngang */
-    align-items: center;      /* căn dọc */
-    text-align: center;       /* căn text */
-    font-size: 20px;
-
+  padding: 40px;
+  border-radius: 20px;
+  backdrop-filter: blur(15px);
+  box-shadow: 0 0 40px rgba(0,255,255,0.3);
+  text-align: center;
 }
 
+h2 {
+  color: white;
+  margin-bottom: 25px;
+}
 
+input {
+  padding: 15px;
+  font-size: 22px;
+  width: 160px;
+  text-align: center;
+  border-radius: 12px;
+  border: none;
+  outline: none;
+  margin: 10px;
+  transition: 0.3s;
+}
 
+#numberInput {
+  background: #ffffff;
+}
+
+#resultInput {
+  background: #111;
+  color: white;
+  font-weight: bold;
+}
+
+.success {
+  box-shadow: 0 0 20px #00ff99;
+  background: #00ff99 !important;
+  color: black !important;
+}
+
+.fail {
+  animation: shake 0.3s;
+  box-shadow: 0 0 20px #ff0066;
+  background: #ff0066 !important;
+  color: white !important;
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+  100% { transform: translateX(0); }
+}
 </style>
 </head>
 
-
-
 <body>
 
-<div class="wrapper">
-    
-    <div class="card1">  Gặp 0-2-4 ===> 0 </div>
-    <div class="card1">  Gặp 5-26-68-89 ===> 1 </div>
- 
-    <div class="card1">  Gặp  ABAB  ====> A </div>
-    <div class="card1">  ( 1% ) <=> ( 2% ) <=> ( 5% ) <=> ( 12% ) </div>
+<div class="container">
+  <h2>Nhập 3 chữ số</h2>
 
-    <div id="contentBox" class="card"></div>
-    <div id="timeBox" class="card">25</div>
-    
-    <div class="buttons">
-        <button id="startBtn">Bắt đầu</button>
-        <button id="resetBtn">Reset</button>
-    </div>
+  <input 
+    type="tel"
+    id="numberInput"
+    maxlength="3"
+    inputmode="numeric"
+    placeholder="___"
+    oninput="checkNumber()"
+  >
 
+  <br>
+
+  <input 
+    type="text"
+    id="resultInput"
+    readonly
+    placeholder="Kết quả"
+  >
 </div>
 
-
-
 <script>
-const data = [
-  { text: "1. Gặp A-A ===> B   ", time: 25 },
-  { text: "2. Gặp A-A-A ===> B   ", time: 25 },
-  { text: "3. Gặp A-A-A-A ===>  B ", time: 25 },
-  { text: "4. Gặp A-A-A-A-A ===> A   ", time: 25 }
-  
-];
+const data = ["348", "123", "999"];
 
-const contentBox = document.getElementById("contentBox");
-const timeBox = document.getElementById("timeBox");
-const startBtn = document.getElementById("startBtn");
-const resetBtn = document.getElementById("resetBtn");
+function checkNumber() {
+  const input = document.getElementById("numberInput").value;
+  const result = document.getElementById("resultInput");
 
-let index = 0;
-let countdown = data[0].time;
-let interval = null;
+  result.classList.remove("success", "fail");
 
-function loadItem(i) {
-    contentBox.textContent = data[i].text;
-    timeBox.textContent = data[i].time;
-    countdown = data[i].time;
-
-    contentBox.classList.remove("fade");
-    void contentBox.offsetWidth;
-    contentBox.classList.add("fade");
-}
-
-window.onload = () => {
-    loadItem(0);
-};
-
-
-// Tạo tiếng tích tắc bằng Web Audio API
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-function playTick() {
-    const oscillator = audioCtx.createOscillator();
-    const gainNode = audioCtx.createGain();
-
-    oscillator.type = "square";
-    oscillator.frequency.value = 1000; // cao độ
-    gainNode.gain.value = 0.1; // âm lượng
-
-    oscillator.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
-
-    oscillator.start();
-    oscillator.stop(audioCtx.currentTime + 0.05);
-}
-
-
-
-function startTimer() {
-    if (interval) return;
-
-    interval = setInterval(() => {
-    countdown--;
-    timeBox.textContent = countdown;
-
-    if (countdown <= 10 && countdown > 0) {
-        timeBox.classList.add("danger");
-        playTick();
+  if (input.length === 3) {
+    if (data.includes(input)) {
+      result.value = "0";
+      result.classList.add("success");
     } else {
-        timeBox.classList.remove("danger");
+      result.value = "1";
+      result.classList.add("fail");
     }
-
-    if (countdown <= 0) {
-    playEndSound(); // thêm dòng này
-    timeBox.classList.remove("danger");
-    index = (index + 1) % data.length;
-    loadItem(index);
+  } else {
+    result.value = "";
+  }
 }
-
-}, 1000);
-}
-
-
-
-function playEndSound() {
-    const oscillator = audioCtx.createOscillator();
-    const gainNode = audioCtx.createGain();
-
-    oscillator.type = "sawtooth"; // khác với tick
-    oscillator.frequency.value = 300; // trầm hơn
-    gainNode.gain.value = 0.2;
-
-    oscillator.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
-
-    oscillator.start();
-
-    // giảm âm dần cho mượt
-    gainNode.gain.exponentialRampToValueAtTime(
-        0.001,
-        audioCtx.currentTime + 0.6
-    );
-
-    oscillator.stop(audioCtx.currentTime + 0.6);
-}
-
-
-
-
-function resetAll() {
-    clearInterval(interval);
-    interval = null;
-    index = 0;
-    loadItem(0);
-}
-
-startBtn.addEventListener("click", startTimer);
-resetBtn.addEventListener("click", resetAll);
 </script>
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
