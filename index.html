@@ -56,7 +56,15 @@ input {
   background: #111;
   color: white;
   font-weight: bold;
+  width: 250px;
+  font-size: 20px;
+  padding: 18px;
+  border-radius: 12px;
+  margin: 8px;
+  display: inline-block;
 }
+
+
 
 .success {
   box-shadow: 0 0 20px #00ff99;
@@ -78,6 +86,26 @@ input {
   75% { transform: translateX(-5px); }
   100% { transform: translateX(0); }
 }
+
+.qqq {
+  margin-top: 20px;
+  padding: 18px 25px;
+  max-width: 380px;
+  border-radius: 16px;
+
+  font-size: 16px;
+  font-weight: 600;
+
+  color: #ffcc00;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 204, 0, 0.5);
+
+  box-shadow: 0 0 25px rgba(255, 204, 0, 0.4);
+  display: inline-block;
+}
+
+
+
 </style>
 </head>
 
@@ -85,7 +113,9 @@ input {
 
 <div class="container">
   <h2>Nhập 3 chữ số</h2>
-
+  
+   <div class="qqq">Nếu 3 lần đều Thất Bại hãy bỏ qua...Đừng cố</div>
+  <br>
   <!-- Ô nhập -->
   <input 
     type="tel"
@@ -109,13 +139,12 @@ input {
   <br>
 
   <!-- Ô kết quả -->
-  <input 
-    type="text"
-    id="resultInput"
-    readonly
-    placeholder="Kết quả"
-  >
-</div>
+  <div id="resultInput">Kết quả</div>
+  
+  
+  
+  
+  </div>
 
 <script>
 
@@ -164,44 +193,56 @@ const data = [
 
 "908","909","911","917","918","922","924","931","947","959","969","975","977","980","982","987","989",
 "991","995","999","994","988","978","957","912","951","985"
-
-
-
-
 ];
+
+
+
+
+
 const input = document.getElementById("numberInput");
 const copyBox = document.getElementById("copyInput");
 const result = document.getElementById("resultInput");
 
-input.addEventListener("input", function() {
+input.addEventListener("input", function () {
 
-  this.value = this.value.replace(/[^0-9]/g, "");
+  // Chỉ cho nhập số
+  this.value = this.value.replace(/\D/g, "");
 
   if (this.value.length === 3) {
 
     const value = this.value;
 
-    // Copy lên ô phía trên
+    // Hiển thị số vừa nhập
     copyBox.value = value;
 
+    // Reset trạng thái cũ
     result.classList.remove("success", "fail");
 
-    // Kiểm tra const
+    // Kiểm tra trong mảng data
     if (data.includes(value)) {
-      result.value = "1";
+      result.textContent = " 1";
       result.classList.add("success");
     } else {
-      result.value = "0";
+      result.textContent = " 0";
       result.classList.add("fail");
     }
 
-    // Reset để nhập tiếp
-    setTimeout(() => {
-      input.value = "";
-      input.focus();
-    }, 300);
+    // Xóa ô nhập để nhập tiếp
+    this.value = "";
+    this.focus();
   }
 });
+
+
+
+   
+  
+
+
+
+
+
+
 
 window.onload = function() {
   input.focus();
