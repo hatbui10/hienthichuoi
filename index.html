@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kiểm tra 4 chữ số (IPFS)</title>
+<title>Kiểm Tra 4 Số (IPFS)</title>
 
 <style>
 body {
@@ -12,9 +12,8 @@ body {
   font-family: Arial, sans-serif;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
-  padding-top: 30px;
-  min-height: 100vh;
+  align-items: center;
+  height: 100vh;
 }
 
 .container {
@@ -36,7 +35,7 @@ h2 {
 input {
   padding: 15px;
   font-size: 22px;
-  width: 180px;
+  width: 200px;
   text-align: center;
   border-radius: 12px;
   border: none;
@@ -44,30 +43,29 @@ input {
   margin: 8px;
 }
 
-#copyInput {
-  background: #222;
+#copyBox {
+  background: #111;
   color: #00ffff;
   font-weight: bold;
 }
 
 #resultBox {
-  background: #111;
+  background: #000;
   color: white;
+  font-size: 28px;
   font-weight: bold;
-  font-size: 20px;
-  padding: 18px;
+  padding: 15px;
   border-radius: 12px;
   margin-top: 10px;
+  width: 30%;
 }
 
 .success {
-  box-shadow: 0 0 20px #00ff99;
   background: #00ff99 !important;
   color: black !important;
 }
 
 .fail {
-  box-shadow: 0 0 20px #ff0066;
   background: #ff0066 !important;
   color: white !important;
 }
@@ -79,6 +77,7 @@ input {
 <div class="container">
   <h2>Nhập 4 chữ số</h2>
 
+  <!-- Ô nhập -->
   <input 
     type="tel"
     id="numberInput"
@@ -88,37 +87,47 @@ input {
     placeholder="Nhập 4 số..."
   >
 
-  <br>
-
+  <!-- Ô copy -->
   <input 
     type="text"
-    id="copyInput"
+    id="copyBox"
     readonly
-    placeholder="Giá trị vừa nhập"
+    placeholder="Giá trị copy"
   >
 
-  <div id="resultBox">Đang tải dữ liệu...</div>
+  <!-- Ô kết quả -->
+  <div id="resultBox">Đang tải...</div>
 </div>
 
 <script>
 
 const ipfsURL = "https://tomato-delicate-zebra-533.mypinata.cloud/ipfs/bafkreibuib6kgt6pk2hajse7bvtpgqhap7dqeb5dtxxtyu3vd3cbkwlklq";
 
-let dataSet = null;
+let dataSet = new Set();
 
 const input = document.getElementById("numberInput");
-const copyBox = document.getElementById("copyInput");
+const copyBox = document.getElementById("copyBox");
 const result = document.getElementById("resultBox");
 
-// Load dữ liệu từ IPFS
+// Load dữ liệu IPFS
 fetch(ipfsURL)
-  .then(res => res.json())
-  .then(data => {
-    dataSet = new Set(data);
-    result.textContent = "Sẵn sàng kiểm tra";
+  .then(res => res.text())
+  .then(text => {
+
+    const array = text
+      .trim()
+      .replace(/"/g, "")
+      .split(",")
+      .map(x => x.trim())
+      .filter(x => x !== "");
+
+    dataSet = new Set(array);
+
+    result.textContent = "Sẵn sàng";
+    console.log("Đã load:", dataSet.size, "số");
   })
   .catch(err => {
-    result.textContent = "Lỗi tải dữ liệu";
+    result.textContent = "Lỗi tải";
     console.error(err);
   });
 
@@ -126,11 +135,14 @@ input.addEventListener("input", function () {
 
   this.value = this.value.replace(/\D/g, "");
 
-  if (this.value.length === 4 && dataSet) {
+  if (this.value.length === 4 && dataSet.size > 0) {
 
     const value = this.value;
+
+    // 1️⃣ Copy sang ô trên
     copyBox.value = value;
 
+    // 2️⃣ Kiểm tra sau khi copy
     result.classList.remove("success", "fail");
 
     if (dataSet.has(value)) {
@@ -141,6 +153,7 @@ input.addEventListener("input", function () {
       result.classList.add("fail");
     }
 
+    // 3️⃣ Xóa ô nhập để nhập tiếp
     this.value = "";
     this.focus();
   }
@@ -154,8 +167,3 @@ window.onload = function() {
 
 </body>
 </html>
-
-
-
-
-
