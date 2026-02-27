@@ -119,127 +119,6 @@ input {
 
 <script>
 
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-<meta charset="UTF-8">
-<title>Kiểm tra 3 chữ số</title>
-
-<style>
-body {
-  margin: 0;
-  background: linear-gradient(135deg, #1e1e2f, #2b1055);
-  font-family: Arial, sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding-top: 30px;
-  min-height: 100vh;
-}
-
-.container {
-  background: rgba(255,255,255,0.05);
-  padding: 30px;
-  border-radius: 20px;
-  backdrop-filter: blur(15px);
-  box-shadow: 0 0 40px rgba(0,255,255,0.3);
-  text-align: center;
-}
-
-h2 {
-  color: white;
-  margin-bottom: 20px;
-}
-
-input {
-  padding: 15px;
-  font-size: 22px;
-  width: 170px;
-  text-align: center;
-  border-radius: 12px;
-  border: none;
-  outline: none;
-  margin: 8px;
-  transition: 0.3s;
-}
-
-#numberInput {
-  background: #ffffff;
-}
-
-#copyInput {
-  background: #222;
-  color: #00ffff;
-  font-weight: bold;
-}
-
-#resultInput {
-  background: #111;
-  color: white;
-  font-weight: bold;
-}
-
-.success {
-  box-shadow: 0 0 20px #00ff99;
-  background: #00ff99 !important;
-  color: black !important;
-}
-
-.fail {
-  animation: shake 0.3s;
-  box-shadow: 0 0 20px #ff0066;
-  background: #ff0066 !important;
-  color: white !important;
-}
-
-@keyframes shake {
-  0% { transform: translateX(0); }
-  25% { transform: translateX(-5px); }
-  50% { transform: translateX(5px); }
-  75% { transform: translateX(-5px); }
-  100% { transform: translateX(0); }
-}
-</style>
-</head>
-
-<body>
-
-<div class="container">
-  <h2>Nhập 3 chữ số</h2>
-
-  <!-- Ô nhập -->
-  <input 
-    type="tel"
-    id="numberInput"
-    maxlength="3"
-    inputmode="numeric"
-    pattern="[0-9]*"
-    placeholder="Nhập số..."
-  >
-
-  <br>
-
-  <!-- Ô copy giá trị -->
-  <input 
-    type="text"
-    id="copyInput"
-    readonly
-    placeholder="Giá trị vừa nhập"
-  >
-
-  <br>
-
-  <!-- Ô kết quả -->
-  <input 
-    type="text"
-    id="resultInput"
-    readonly
-    placeholder="Kết quả"
-  >
-</div>
-
-<script>
-
 const data = [
 "002","007","008","011","017","027","034","039","040","041","043","044","068","070","076","090","098",
 "006","072","080","071",
@@ -256,10 +135,10 @@ const data = [
 
 
 "301","303","309","310","329","331","346","349","365","371","375","384","387","389",
-"300","319","304","322","311","327","377","437","324",
+"300","319","304","322","311","327","377","324","321",
 
 
-"402","403","415","418","430","431","434","437","442","445","451","454","464","465","484","496","494","410","469","457",
+"402","403","415","418","426","430","431","434","437","442","445","451","454","464","465","484","496","494","410","469","457",
 
 "412","432","400","463",
 
@@ -334,51 +213,5 @@ window.onload = function() {
 
 </body>
 </html>
-
-
-
-const input = document.getElementById("numberInput");
-const copyBox = document.getElementById("copyInput");
-const result = document.getElementById("resultInput");
-
-input.addEventListener("input", function() {
-
-  this.value = this.value.replace(/[^0-9]/g, "");
-
-  if (this.value.length === 3) {
-
-    const value = this.value;
-
-    // Copy lên ô phía trên
-    copyBox.value = value;
-
-    result.classList.remove("success", "fail");
-
-    // Kiểm tra const
-    if (data.includes(value)) {
-      result.value = "1";
-      result.classList.add("success");
-    } else {
-      result.value = "0";
-      result.classList.add("fail");
-    }
-
-    // Reset để nhập tiếp
-    setTimeout(() => {
-      input.value = "";
-      input.focus();
-    }, 300);
-  }
-});
-
-window.onload = function() {
-  input.focus();
-};
-
-</script>
-
-</body>
-</html>
-
 
 
