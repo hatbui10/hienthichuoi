@@ -163,9 +163,9 @@ button:disabled {
   background: #982598;
   color: white;
   font-weight: bold;
-  width: 60%;
+  width: 30%;
   padding: 12px;
-  font-size: 26px;
+  font-size: 30px;
   border-radius: 12px;
   border: none;
   text-align: center;
@@ -173,7 +173,7 @@ button:disabled {
 
 /* Textarea lưu danh sách */
 #copyBoxTextarea {
-  width: 85%;
+  width: 70%;
   height: 100px;
   padding: 12px;
   border-radius: 12px;
@@ -205,7 +205,7 @@ button:disabled {
     type="text" 
     id="copyBox1" 
     readonly 
-    placeholder="Giá trị copy 1"
+    placeholder="copy 1"
   >
 
   <!-- Copy 2 -->
@@ -213,7 +213,7 @@ button:disabled {
     type="text" 
     id="copyBox2" 
     readonly 
-    placeholder="Giá trị copy 2"
+    placeholder="copy 2"
   >
 
   <!-- Textarea lưu danh sách -->
@@ -383,14 +383,23 @@ function checkValue() {
 
   if (allDigitsGTE5 && copyBox2.value) {
 
-    savedList.push(`"${copyBox2.value}"`);
+    // Thêm vào danh sách (không thêm dấu " ở đây)
+    savedList.push(copyBox2.value);
 
-    // Chia 20 số / dòng
+    // ===== SẮP XẾP TOÀN BỘ DANH SÁCH =====
+    savedList.sort((a, b) => Number(a) - Number(b));
+
+    // ===== Chia 20 số / dòng =====
     const chunkSize = 20;
     let lines = [];
 
     for (let i = 0; i < savedList.length; i += chunkSize) {
-      lines.push(savedList.slice(i, i + chunkSize).join(","));
+      lines.push(
+        savedList
+          .slice(i, i + chunkSize)
+          .map(v => `"${v}"`)
+          .join(",")
+      );
     }
 
     copyBoxTextarea.value = lines.join("\n");
@@ -408,6 +417,7 @@ function checkValue() {
     result.classList.add("fail");
   }
 }
+
 
 
 
@@ -476,6 +486,7 @@ function exportTxt() {
 
   URL.revokeObjectURL(url);
 }
+
 
 
 
