@@ -3,20 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kiểm Tra 4 Số (IPFS)</title>
+<title>Kiểm Tra Chuỗi Số (Dynamic UI)</title>
 
 <style>
 body {
   margin: 0;
-  padding: 30px; /* tránh dính sát quá nhìn khó chịu */
+  padding: 30px;
   background: linear-gradient(135deg, #1e1e2f, #2b1055);
   font-family: Arial, sans-serif;
-
   display: flex;
   justify-content: center;
-  align-items: flex-start; /* 👈 đẩy lên trên */
-  
-  min-height: 100vh; /* thay vì height cố định */
+  align-items: flex-start;
+  min-height: 100vh;
 }
 
 .container {
@@ -27,40 +25,86 @@ body {
   box-shadow: 0 0 40px rgba(0,255,255,0.3);
   text-align: center;
   width: 95%;
-  max-width: 400px;
+  max-width: 520px;
 }
 
 h2 {
   color: white;
+  margin: 35px auto;
+  font-size: 40px;
+}
+h1 {
+  color: red;
+  margin: 15px;
+}
+
+
+#control {
+  margin-bottom: 20px;
+  gap: 20px; 
+}
+
+#control input {
+  width: 80px;
+  padding: 8px;
+  font-size: 18px;
+  text-align: center;
+  border-radius: 8px;
+  border: none;
+
+}
+
+#control button {
+  margin-left: 20px;
+}
+
+#boxes {
   margin-bottom: 20px;
 }
 
-input {
-  padding: 15px;
-  font-size: 22px;
-  width: 200px;
+.box {
+  width: 55px;
+  height: 60px;
+  margin: 6px;
+  font-size: 28px;
   text-align: center;
   border-radius: 12px;
   border: none;
   outline: none;
-  margin: 8px;
+}
+
+.readonly {
+  background: #111;
+  color: #00ffff;
+}
+
+.inputbox {
+  background: #fff;
+  color: #000;
 }
 
 #copyBox {
-  background: #111;
-  color: #00ffff;
+  background: #A2CB8B;
+  color: red;
   font-weight: bold;
+  width: 40%;
+  padding: 12px;
+  font-size: 30px;
+  border-radius: 12px;
+  border: none;
+  margin: 10px 0;
+  text-align: center;
 }
 
 #resultBox {
   background: #000;
   color: white;
-  font-size: 28px;
+  font-size: 30px;
   font-weight: bold;
   padding: 15px;
   border-radius: 12px;
+  width: 120px;
   margin: 10px auto;
-  width :30%;
 }
 
 .success {
@@ -72,34 +116,68 @@ input {
   background: #ff0066 !important;
   color: white !important;
 }
+
+
+button {
+  padding: 10px 22px;
+  font-size: 16px;
+  margin: 10px auto;
+  font-weight: bold;
+  border-radius: 10px;
+  
+  border: none;
+  cursor: pointer;
+  color: #00ffff;
+  background: rgba(0, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  box-shadow: 
+    0 0 8px rgba(0,255,255,0.4),
+    inset 0 0 6px rgba(0,255,255,0.2);
+  transition: all 0.25s ease;
+}
+
+button:hover {
+  background: rgba(0,255,255,0.2);
+  box-shadow: 
+    0 0 15px rgba(0,255,255,0.8),
+    0 0 25px rgba(0,255,255,0.4);
+  transform: translateY(-2px);
+}
+
+button:active {
+  transform: scale(0.95);
+  box-shadow: 
+    0 0 8px rgba(0,255,255,0.6);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+
 </style>
 </head>
 
 <body>
 
 <div class="container">
-  <h2>Nhập 4 chữ số</h2>
 
-  <!-- Ô nhập -->
-  <input 
-    type="tel"
-    id="numberInput"
-    maxlength="4"
-    inputmode="numeric"
-    pattern="[0-9]*"
-    placeholder="Nhập 4 số..."
-  >
+  <h2>Kiểm Tra Chuỗi Số</h2>
 
-  <!-- Ô copy -->
-  <input 
-    type="text"
-    id="copyBox"
-    readonly
-    placeholder="Giá trị copy"
-  >
+  <div id="control">
+   <h1> Số ô kiểm tra:</h1>
+    <input type="number" id="boxCountInput" min="1" max="20" value="4">
+    <button onclick="applyBoxCount()">Tạo</button>
+  </div>
 
-  <!-- Ô kết quả -->
+  <div id="boxes"></div>
+
+  <input type="text" id="copyBox" readonly placeholder="Giá trị copy">
+
   <div id="resultBox">Đang tải...</div>
+
 </div>
 
 <script>
@@ -107,12 +185,106 @@ input {
 const ipfsURL = "https://tomato-delicate-zebra-533.mypinata.cloud/ipfs/bafkreibuib6kgt6pk2hajse7bvtpgqhap7dqeb5dtxxtyu3vd3cbkwlklq";
 
 let dataSet = new Set();
+let currentDigits = [];
+let CHECK_BOX_COUNT = 4;
 
-const input = document.getElementById("numberInput");
+const boxesContainer = document.getElementById("boxes");
 const copyBox = document.getElementById("copyBox");
 const result = document.getElementById("resultBox");
+const boxCountInput = document.getElementById("boxCountInput");
 
-// Load dữ liệu IPFS
+function applyBoxCount() {
+
+  const value = parseInt(boxCountInput.value);
+
+  if (!value || value < 1) return;
+
+  CHECK_BOX_COUNT = value;
+  currentDigits = [];
+  createBoxes();
+}
+
+function createBoxes() {
+
+  boxesContainer.innerHTML = "";
+
+  const TOTAL = CHECK_BOX_COUNT + 1; // +1 là ô nhập
+
+  for (let i = 0; i < TOTAL; i++) {
+
+    const input = document.createElement("input");
+    input.type = "tel";
+    input.maxLength = 1;
+    input.inputMode = "numeric";
+    input.pattern = "[0-9]*";
+    input.classList.add("box");
+
+    if (i === TOTAL - 1) {
+      input.classList.add("inputbox");
+      input.addEventListener("input", handleInput);
+    } else {
+      input.classList.add("readonly");
+      input.readOnly = true;
+    }
+
+    boxesContainer.appendChild(input);
+  }
+
+  focusInputBox();
+}
+
+function focusInputBox() {
+  const all = boxesContainer.querySelectorAll("input");
+  const inputBox = all[all.length - 1];
+  inputBox.value = "";
+  inputBox.focus();
+}
+
+function handleInput(e) {
+
+  const val = e.target.value.replace(/\D/g, "");
+  if (!val) return;
+
+  currentDigits.push(val);
+
+  if (currentDigits.length > CHECK_BOX_COUNT) {
+    currentDigits.shift();
+  }
+
+  updateDisplay();
+
+  if (currentDigits.length === CHECK_BOX_COUNT && dataSet.size > 0) {
+    checkValue();
+  }
+
+  focusInputBox();
+}
+
+function updateDisplay() {
+
+  const all = boxesContainer.querySelectorAll("input");
+
+  for (let i = 0; i < CHECK_BOX_COUNT; i++) {
+    all[i].value = currentDigits[i] || "";
+  }
+}
+
+function checkValue() {
+
+  const value = currentDigits.join("");
+  copyBox.value = value;
+
+  result.classList.remove("success", "fail");
+
+  if (dataSet.has(value)) {
+    result.textContent = "1";
+    result.classList.add("success");
+  } else {
+    result.textContent = "0";
+    result.classList.add("fail");
+  }
+}
+
 fetch(ipfsURL)
   .then(res => res.text())
   .then(text => {
@@ -127,48 +299,14 @@ fetch(ipfsURL)
     dataSet = new Set(array);
 
     result.textContent = "Sẵn sàng";
-    console.log("Đã load:", dataSet.size, "số");
   })
   .catch(err => {
     result.textContent = "Lỗi tải";
-    console.error(err);
   });
 
-input.addEventListener("input", function () {
-
-  this.value = this.value.replace(/\D/g, "");
-
-  if (this.value.length === 4 && dataSet.size > 0) {
-
-    const value = this.value;
-
-    // 1️⃣ Copy sang ô trên
-    copyBox.value = value;
-
-    // 2️⃣ Kiểm tra sau khi copy
-    result.classList.remove("success", "fail");
-
-    if (dataSet.has(value)) {
-      result.textContent = "1";
-      result.classList.add("success");
-    } else {
-      result.textContent = "0";
-      result.classList.add("fail");
-    }
-
-    // 3️⃣ Xóa ô nhập để nhập tiếp
-    this.value = "";
-    this.focus();
-  }
-});
-
-window.onload = function() {
-  input.focus();
-};
+createBoxes();
 
 </script>
 
 </body>
 </html>
-
-
