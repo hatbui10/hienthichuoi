@@ -183,6 +183,13 @@ button:disabled {
   outline: none;
 }
 
+.buttonRow {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  width: 100%;
+}
+
 
 
 </style>
@@ -223,7 +230,7 @@ button:disabled {
     placeholder="Danh sách đạt điều kiện"
   ></textarea>
 
-  <!-- Nút -->
+ <div class="buttonRow">
   <button id="copyBtn" onclick="copyToClipboard()">
     Copy
   </button>
@@ -231,6 +238,7 @@ button:disabled {
   <button onclick="exportTxt()">
     Xuất TXT
   </button>
+</div>
 
 </div>  
   
