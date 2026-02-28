@@ -267,15 +267,14 @@ button:disabled {
 
 <script>
 
-const ipfsURL = "  
-
-https://tomato-delicate-zebra-533.mypinata.cloud/ipfs/bafkreifaa75uoyhv4jjd7oldufe7gb4ymtzhzybxzjbdq3ykj5rfjnpyba     ";
+const ipfsURL = "https://tomato-delicate-zebra-533.mypinata.cloud/ipfs/bafkreifaa75uoyhv4jjd7oldufe7gb4ymtzhzybxzjbdq3ykj5rfjnpyba";
 
 // ===== DATA =====
 let dataSet = new Set();
 let currentDigits = [];
 let CHECK_BOX_COUNT = 3;
 let savedList = [];
+let prevDigits = [];
 
 // ===== DOM =====
 const boxesContainer = document.getElementById("boxes");
@@ -344,19 +343,27 @@ function focusInputBox() {
 
 
 function handleInput(e) {
+  const digit = e.target.value.replace(/\D/g, "").slice(0,1);
+  if (!digit) return;
 
-  const val = e.target.value.replace(/\D/g, "");
-  if (!val) return;
-
-  currentDigits.push(val);
+  // Đẩy digit mới vào current
+  currentDigits.push(digit);
 
   if (currentDigits.length > CHECK_BOX_COUNT) {
-    currentDigits.shift();
+    const shifted = currentDigits.shift();
+
+    // shifted này chính là phần tử bị đẩy ra
+    prevDigits.push(shifted);
+
+    if (prevDigits.length > CHECK_BOX_COUNT) {
+      prevDigits.shift();
+    }
   }
 
   updateDisplay();
+  updateCopyBoxes();
 
-  if (currentDigits.length === CHECK_BOX_COUNT && dataSet.size > 0) {
+  if (currentDigits.length === CHECK_BOX_COUNT && dataSet.size) {
     checkValue();
   }
 
@@ -382,9 +389,7 @@ function checkValue() {
 
   const value = currentDigits.join("");
 
-  // Đẩy tầng: Copy1 xuống Copy2
-  copyBox2.value = copyBox1.value;
-  copyBox1.value = value;
+  
 
   // ===== Điều kiện: tất cả chữ số Copy1 >= 5 =====
   const allDigitsGTE5 = value
@@ -447,6 +452,12 @@ function copyToClipboard() {
     });
 }
 
+
+
+function updateCopyBoxes() {
+  copyBox1.value = currentDigits.join("");
+  copyBox2.value = prevDigits.join("");
+}
 
 
 
