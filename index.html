@@ -169,8 +169,18 @@ button:disabled {
 
   <div id="control">
    <h1> Số ô kiểm tra:</h1>
-    <input type="number" id="boxCountInput" min="1" max="20" value="4">
-    <button onclick="applyBoxCount()">Tạo</button>
+    
+    <input 
+  type="tel"
+  id="boxCountInput"
+  inputmode="numeric"
+  pattern="[0-9]*"
+  min="1"
+  max="20"
+  value="4"
+>
+    
+        <button onclick="applyBoxCount()">Tạo</button>
   </div>
 
   <div id="boxes"></div>
