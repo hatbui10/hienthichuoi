@@ -396,7 +396,10 @@ function checkValue() {
     .split("")
     .every(d => Number(d) >= 5);
 
-  if (allDigitsGTE5 && copyBox2.value) {
+  if (
+  allDigitsGTE5 &&
+  copyBox2.value.length === CHECK_BOX_COUNT
+) {
 
     // Thêm vào danh sách (không thêm dấu " ở đây)
     savedList.push(copyBox2.value);
