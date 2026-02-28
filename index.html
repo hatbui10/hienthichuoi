@@ -83,18 +83,8 @@ h1 {
   color: #000;
 }
 
-#copyBox {
-  background: #982598;
-  color: white;
-  font-weight: bold;
-  width: 40%;
-  padding: 12px;
-  font-size: 30px;
-  border-radius: 12px;
-  border: none;
-  margin: 6px 0;
-  text-align: center;
-}
+
+
 
 #resultBox {
   background: #000;
@@ -158,6 +148,43 @@ button:disabled {
 }
 
 
+/* Cột chứa toàn bộ phần copy */
+#copyColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+/* Copy 1 & Copy 2 (hai ô input giống nhau) */
+#copyBox1,
+#copyBox2 {
+  background: #982598;
+  color: white;
+  font-weight: bold;
+  width: 60%;
+  padding: 12px;
+  font-size: 26px;
+  border-radius: 12px;
+  border: none;
+  text-align: center;
+}
+
+/* Textarea lưu danh sách */
+#copyBoxTextarea {
+  width: 85%;
+  height: 100px;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 16px;
+  resize: none;
+  border: none;
+  outline: none;
+}
+
+
+
 </style>
 </head>
 
@@ -166,7 +193,49 @@ button:disabled {
 <div class="container">
 
   <h2>Kiểm Tra Chuỗi Số</h2>
+    <div id="resultBox">Đang tải...</div>
 
+  
+  <div id="boxes"></div>
+
+  <div id="copyColumn">
+
+  <!-- Copy 1 -->
+  <input 
+    type="text" 
+    id="copyBox1" 
+    readonly 
+    placeholder="Giá trị copy 1"
+  >
+
+  <!-- Copy 2 -->
+  <input 
+    type="text" 
+    id="copyBox2" 
+    readonly 
+    placeholder="Giá trị copy 2"
+  >
+
+  <!-- Textarea lưu danh sách -->
+  <textarea 
+    id="copyBoxTextarea" 
+    readonly 
+    placeholder="Danh sách đạt điều kiện"
+  ></textarea>
+
+  <!-- Nút -->
+  <button id="copyBtn" onclick="copyToClipboard()">
+    Copy
+  </button>
+
+  <button onclick="exportTxt()">
+    Xuất TXT
+  </button>
+
+</div>  
+  
+  
+  
   <div id="control">
    <h1> Số ô kiểm tra:</h1>
     
@@ -177,33 +246,37 @@ button:disabled {
   pattern="[0-9]*"
   min="1"
   max="20"
-  value="4"
+  value="3"
 >
     
         <button onclick="applyBoxCount()">Tạo</button>
   </div>
 
-  <div id="boxes"></div>
+</div>
 
-  <input type="text" id="copyBox" readonly placeholder="Giá trị copy">
-
-  <div id="resultBox">Đang tải...</div>
-
+ 
 </div>
 
 <script>
 
 const ipfsURL = "https://tomato-delicate-zebra-533.mypinata.cloud/ipfs/bafkreicpkddnxu3oqvshjx2e235lllo7sjkkawjxghnxkvv4s6egmjdnri";
 
+// ===== DATA =====
 let dataSet = new Set();
 let currentDigits = [];
-let CHECK_BOX_COUNT = 4;
+let CHECK_BOX_COUNT = 3;
+let savedList = [];
 
+// ===== DOM =====
 const boxesContainer = document.getElementById("boxes");
-const copyBox = document.getElementById("copyBox");
-const result = document.getElementById("resultBox");
 const boxCountInput = document.getElementById("boxCountInput");
+const result = document.getElementById("resultBox");
 
+const copyBox1 = document.getElementById("copyBox1");
+const copyBox2 = document.getElementById("copyBox2");
+const copyBoxTextarea = document.getElementById("copyBoxTextarea");
+
+const copyBtn = document.getElementById("copyBtn");
 function applyBoxCount() {
 
   const value = parseInt(boxCountInput.value);
@@ -214,6 +287,9 @@ function applyBoxCount() {
   currentDigits = [];
   createBoxes();
 }
+
+
+
 
 function createBoxes() {
 
@@ -244,12 +320,18 @@ function createBoxes() {
   focusInputBox();
 }
 
+
+
+
 function focusInputBox() {
   const all = boxesContainer.querySelectorAll("input");
   const inputBox = all[all.length - 1];
   inputBox.value = "";
   inputBox.focus();
 }
+
+
+
 
 function handleInput(e) {
 
@@ -271,6 +353,9 @@ function handleInput(e) {
   focusInputBox();
 }
 
+
+
+
 function updateDisplay() {
 
   const all = boxesContainer.querySelectorAll("input");
@@ -280,11 +365,39 @@ function updateDisplay() {
   }
 }
 
+
+
+
 function checkValue() {
 
   const value = currentDigits.join("");
-  copyBox.value = value;
 
+  // Đẩy tầng: Copy1 xuống Copy2
+  copyBox2.value = copyBox1.value;
+  copyBox1.value = value;
+
+  // ===== Điều kiện: tất cả chữ số Copy1 >= 5 =====
+  const allDigitsGTE5 = value
+    .split("")
+    .every(d => Number(d) >= 5);
+
+  if (allDigitsGTE5 && copyBox2.value) {
+
+    savedList.push(`"${copyBox2.value}"`);
+
+    // Chia 20 số / dòng
+    const chunkSize = 20;
+    let lines = [];
+
+    for (let i = 0; i < savedList.length; i += chunkSize) {
+      lines.push(savedList.slice(i, i + chunkSize).join(","));
+    }
+
+    copyBoxTextarea.value = lines.join("\n");
+    copyBoxTextarea.scrollTop = copyBoxTextarea.scrollHeight;
+  }
+
+  // ===== Kiểm tra dataset =====
   result.classList.remove("success", "fail");
 
   if (dataSet.has(value)) {
@@ -295,6 +408,27 @@ function checkValue() {
     result.classList.add("fail");
   }
 }
+
+
+
+
+function copyToClipboard() {
+
+  const text = copyBox2.value;
+
+  if (!text) return;
+
+  navigator.clipboard.writeText(text)
+    .then(() => {
+      copyBtn.textContent = "Đã Copy";
+      setTimeout(() => {
+        copyBtn.textContent = "Copy";
+      }, 1000);
+    });
+}
+
+
+
 
 fetch(ipfsURL)
   .then(res => res.text())
@@ -316,6 +450,34 @@ fetch(ipfsURL)
   });
 
 createBoxes();
+
+
+function exportTxt() {
+
+  if (!savedList.length) return;
+
+  // Chia 20 số / dòng giống textarea
+  const chunkSize = 20;
+  let lines = [];
+
+  for (let i = 0; i < savedList.length; i += chunkSize) {
+    lines.push(savedList.slice(i, i + chunkSize).join(","));
+  }
+
+  const content = lines.join("\n");
+
+  const blob = new Blob([content], { type: "text/plain" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "danhsach_so.txt";
+  a.click();
+
+  URL.revokeObjectURL(url);
+}
+
+
 
 </script>
 
