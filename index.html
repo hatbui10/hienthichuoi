@@ -213,7 +213,10 @@ button:disabled {
   border: none;
   outline: none;
 }
-  
+  .neutral {
+  background: red !important;
+  color: white !important;
+  }
   
 
 
@@ -535,7 +538,9 @@ else if (dataSet2.has(value)) {
 // Nếu không có ở đâu → bỏ qua
 else {
 
-  return;
+  result.textContent = "Bỏ qua";
+  result.classList.remove("success", "fail");
+  result.classList.add("neutral");
 
 }
 }
@@ -629,6 +634,7 @@ createBoxes();
 
 </body>
 </html>
+
 
 
 
