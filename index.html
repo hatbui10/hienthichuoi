@@ -252,9 +252,12 @@ button:disabled {
   <textarea 
     id="copyBoxTextarea" 
     readonly 
-    placeholder="Danh sách đạt điều kiện"
+    placeholder="Danh sách >=5"
   ></textarea>
-
+     
+    <button id="copyBtn" onclick="copyToClipboard()">
+    Copy
+  </button>
     
     
     <!-- Textarea lưu toàn bộ số nhập -->
@@ -279,9 +282,7 @@ button:disabled {
     
     
  <div class="buttonRow">
-  <button id="copyBtn" onclick="copyToClipboard()">
-    Copy
-  </button>
+  
 
   <button onclick="exportTxt()">
     Xuất TXT
@@ -319,6 +320,7 @@ const ipfsURL = "https://tomato-delicate-zebra-533.mypinata.cloud/ipfs/bafkreia2
 
 // ===== DATA =====
 let dataSet = new Set();
+let dataSet2 = new Set();
 let currentDigits = [];
 let CHECK_BOX_COUNT = 3;
 let savedList = [];
@@ -516,17 +518,29 @@ function checkValue() {
 }
     
     
-    
   // ===== Kiểm tra dataset =====
-  result.classList.remove("success", "fail");
+result.classList.remove("success", "fail");
 
-  if (dataSet.has(value)) {
-    result.textContent = "1";
-    result.classList.add("success");
-  } else {
-    result.textContent = "0";
-    result.classList.add("fail");
-  }
+// Nếu có trong const 1
+if (dataSet.has(value)) {
+
+  result.textContent = "1";
+  result.classList.add("success");
+
+}
+// Nếu có trong const 2
+else if (dataSet2.has(value)) {
+
+  result.textContent = "0";
+  result.classList.add("fail");
+
+}
+// Nếu không có ở đâu → bỏ qua
+else {
+
+  return;
+
+}
 }
 
 
