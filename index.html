@@ -400,14 +400,26 @@ const inputHistoryTextarea = document.getElementById("inputHistoryTextarea");
 const copyBtn = document.getElementById("copyBtn");
   
   
-  // Gán vào Set
-// Gán vào Set
-dataSet = new Set(data.data);
-dataSet2 = new Set(data.data2);
+  
+ const stored1 = localStorage.getItem("dataSet");
+const stored2 = localStorage.getItem("dataSet2");
 
-// QUAN TRỌNG: đồng bộ luôn vào savedList
-savedList = [...dataSet];
-savedListLess5 = [...dataSet2];
+if (stored1) {
+  dataSet = new Set(JSON.parse(stored1));
+  savedList = [...dataSet];
+} else {
+  dataSet = new Set(data.data);
+  savedList = [...dataSet];
+}
+
+if (stored2) {
+  dataSet2 = new Set(JSON.parse(stored2));
+  savedListLess5 = [...dataSet2];
+} else {
+  dataSet2 = new Set(data.data2);
+  savedListLess5 = [...dataSet2];
+}
+
 
 renderConstToTextarea();
 
@@ -552,6 +564,7 @@ function checkValue() {
     if (!dataSet.has(copyBox2.value)) {
   dataSet.add(copyBox2.value);
   savedList.push(copyBox2.value);
+  saveToStorage();
 }    
 
     // ===== SẮP XẾP TOÀN BỘ DANH SÁCH =====
@@ -585,6 +598,7 @@ function checkValue() {
  if (!dataSet2.has(copyBox2.value)) {
   dataSet2.add(copyBox2.value);
   savedListLess5.push(copyBox2.value);
+  saveToStorage();
 }
   savedListLess5.sort((a, b) => Number(a) - Number(b));
 
@@ -630,6 +644,8 @@ else {
   result.classList.add("neutral");
 
 }
+
+
 }
 
 
@@ -753,6 +769,12 @@ function checkDuplicateBetweenSets() {
     result.classList.add("neutral");
 
   }
+}
+
+
+function saveToStorage() {
+  localStorage.setItem("dataSet", JSON.stringify([...dataSet]));
+  localStorage.setItem("dataSet2", JSON.stringify([...dataSet2]));
 }
 
 </script>
