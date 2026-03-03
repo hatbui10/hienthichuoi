@@ -257,6 +257,7 @@ button:disabled {
       placeholder="Danh sách >= 5"
     ></textarea>
 
+
     <button id="copyBtn" onclick="copyToClipboard()">
       Copy
     </button>
@@ -272,6 +273,10 @@ button:disabled {
       readonly
       placeholder="Danh sách < 5"
     ></textarea>
+
+
+
+
 
     <button id="copyHistoryBtn" onclick="copyHistory()">
       Copy 2
@@ -398,6 +403,8 @@ const copyBtn = document.getElementById("copyBtn");
   // Gán vào Set
 dataSet = new Set(data.data);
 dataSet2 = new Set(data.data2);
+renderConstToTextarea();
+
 
 result.textContent = "Sẵn sàng";
   
@@ -537,6 +544,8 @@ function checkValue() {
 
     // Thêm vào danh sách (không thêm dấu " ở đây)
     savedList.push(copyBox2.value);
+    dataSet.add(copyBox2.value);
+    renderConstToTextarea();
 
     // ===== SẮP XẾP TOÀN BỘ DANH SÁCH =====
     savedList.sort((a, b) => Number(a) - Number(b));
@@ -567,6 +576,8 @@ function checkValue() {
 ) {
 
   savedListLess5.push(copyBox2.value);
+  dataSet2.add(copyBox2.value);
+   renderConstToTextarea();
 
   savedListLess5.sort((a, b) => Number(a) - Number(b));
 
@@ -671,6 +682,30 @@ function exportTxt() {
 }
 
 
+function renderConstToTextarea() {
+
+  const sorted1 = [...dataSet].sort((a,b)=>Number(a)-Number(b));
+  const sorted2 = [...dataSet2].sort((a,b)=>Number(a)-Number(b));
+
+  // Chia 20 số mỗi dòng giống logic cũ
+  const chunkSize = 20;
+
+  function format(arr){
+    let lines = [];
+    for(let i=0;i<arr.length;i+=chunkSize){
+      lines.push(
+        arr.slice(i,i+chunkSize)
+          .map(v=>`"${v}"`)
+          .join(",")
+      );
+    }
+    return lines.join("\n");
+  }
+
+  copyBoxTextarea.value = format(sorted1);
+  copyBoxTextarea3.value = format(sorted2);
+}
+
 
 
 function copyHistory() {
@@ -690,6 +725,28 @@ function copyHistory() {
 
 }
 createBoxes();
+
+
+function checkDuplicateBetweenSets() {
+
+  const duplicates = [];
+
+  for (let value of dataSet) {
+    if (dataSet2.has(value)) {
+      duplicates.push(value);
+    }
+  }
+
+  if (duplicates.length > 0) {
+
+    console.log("Trùng giữa 2 dataset:", duplicates);
+
+    result.textContent = "Trùng!";
+    result.classList.remove("success","fail","neutral");
+    result.classList.add("neutral");
+
+  }
+}
 
 </script>
 
