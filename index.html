@@ -549,9 +549,10 @@ function checkValue() {
 ) {
 
     // Thêm vào danh sách (không thêm dấu " ở đây)
-    savedList.push(copyBox2.value);
-    dataSet.add(copyBox2.value);
-    
+    if (!dataSet.has(copyBox2.value)) {
+  dataSet.add(copyBox2.value);
+  savedList.push(copyBox2.value);
+}    
 
     // ===== SẮP XẾP TOÀN BỘ DANH SÁCH =====
     savedList.sort((a, b) => Number(a) - Number(b));
@@ -581,10 +582,10 @@ function checkValue() {
   copyBox2.value.length === CHECK_BOX_COUNT
 ) {
 
-  savedListLess5.push(copyBox2.value);
+ if (!dataSet2.has(copyBox2.value)) {
   dataSet2.add(copyBox2.value);
-   
-
+  savedListLess5.push(copyBox2.value);
+}
   savedListLess5.sort((a, b) => Number(a) - Number(b));
 
   const chunkSize = 20;
