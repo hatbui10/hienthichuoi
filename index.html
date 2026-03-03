@@ -566,6 +566,7 @@ function checkValue() {
   dataSet.add(copyBox2.value);
   savedList.push(copyBox2.value);
   saveToStorage();
+      renderConstToTextarea();
 }    
 
     // ===== SẮP XẾP TOÀN BỘ DANH SÁCH =====
@@ -600,6 +601,7 @@ function checkValue() {
   dataSet2.add(copyBox2.value);
   savedListLess5.push(copyBox2.value);
   saveToStorage();
+   renderConstToTextarea();
 }
   savedListLess5.sort((a, b) => Number(a) - Number(b));
 
@@ -782,7 +784,6 @@ function saveToStorage() {
 
 </body>
 </html>
-
 
 
 
