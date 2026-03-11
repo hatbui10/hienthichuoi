@@ -46,12 +46,38 @@ border-radius:8px
 }
 
 .result{
-margin-top:25px;
+margin:25px auto;
 font-size:40px;
 font-weight:bold;
 text-align:center;
-color:#22c55e
+color: white;
+border: 1px solid white;
+border-radius:8px;
+width:60%;
+background: red;
+padding:8px 14px;   /* khoảng cách giữa chữ và khung */
+
+
+
+animation:blink 0.8s infinite alternate;
+text-shadow:
+0 0 8px white,
+0 0 16px white,
+0 0 24px rgba(34,197,94,0.7);
 }
+
+@keyframes blink{
+from{
+opacity:1;
+transform:scale(1);
+}
+to{
+opacity:0.4;
+transform:scale(1.05);
+}
+}
+
+
 
 .inputBox{
 margin-top:20px;
@@ -63,13 +89,47 @@ width:120px;
 height:60px;
 font-size:28px
 }
+
+.title{
+text-align:center;
+font-size:26px;
+font-weight:bold;
+margin-bottom:25px;
+letter-spacing:3px;
+
+background:linear-gradient(90deg,#38bdf8,#a78bfa,#f472b6);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+
+text-shadow:
+0 0 8px rgba(168,85,247,0.6),
+0 0 16px rgba(56,189,248,0.4);
+
+animation:glow 3s ease-in-out infinite alternate;
+}
+
+@keyframes glow{
+from{
+text-shadow:
+0 0 6px rgba(168,85,247,0.4),
+0 0 12px rgba(56,189,248,0.3);
+}
+to{
+text-shadow:
+0 0 12px rgba(168,85,247,0.9),
+0 0 22px rgba(56,189,248,0.8);
+}
+}
+
+
+
 </style>
 </head>
 
 <body>
 
 <div class="panel">
-
+<div class="title">Logic 0-9 matrix</div>
 <div class="row">
 <div class="box"><label>A</label><input id="A" readonly></div>
 <div class="box"><label>B</label><input id="B" readonly></div>
@@ -81,7 +141,7 @@ font-size:28px
 <input id="INPUT" type="tel" inputmode="numeric" placeholder="Nhập số">
 </div>
 
-<div id="result" class="result">WAIT</div>
+<div id="result" class="result">...</div>
 
 </div>
 
