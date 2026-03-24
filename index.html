@@ -3,82 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Giao Diện Thu Gọn - Dark Gradient</title>
+    <title>Giao diện Tràn Viền Tối Ưu</title>
     <style>
+        /* 1. ÉP BODY PHẢI RỘNG HẾT CỠ */
         html, body {
-            margin: 0; padding: 0; width: 100%; height: 100%;
+            margin: 0; padding: 0;
+            width: 100%; min-height: 100vh;
             display: flex; justify-content: center;
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background: linear-gradient(135deg, #14161a 0%, #243447 100%);
-            background-attachment: fixed;
-            color: #e0e0e0;
+            font-family: 'Segoe UI', sans-serif;
+            background: #101216; /* Nền tối hẳn */
         }
 
+        /* 2. KHUNG CARD: ÉP RỘNG 98% ĐỂ VIỀN NGOÀI BÉ TÍ */
         .card {
-            background: rgba(255, 255, 255, 0.07);
-            width: 98%;
-            
-            margin-top: 10px;
-            padding: 5px; /* Giảm padding */
-            border-radius: 15px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-sizing: border-box;
+            background: #1c1f26; /* Màu xám đen sang trọng */
+            width: 98%;          /* Chiếm 98% chiều rộng màn hình */
+            max-width: 500px;    /* Chỉ giới hạn khi xem trên máy tính to */
+            margin: 10px auto;   /* Lề trên dưới 10px, căn giữa */
+            padding: 20px 10px;  /* Đệm bên trong */
+            border-radius: 12px;
+            box-sizing: border-box; /* Quan trọng: để không bị phình quá 100% */
+            border: 1px solid #333;
             text-align: center;
-            backdrop-filter: blur(8px);
         }
 
-        h2 { margin: 0 0 15px 0; color: #fff; font-size: 1.2rem; font-weight: 500; letter-spacing: 1px; }
+        h2 { margin: 0 0 15px 0; color: #fff; font-size: 1.2rem; text-transform: uppercase; }
 
-        /* Ô nhập liệu: Đã thu nhỏ lại */
+        /* 3. Ô NHẬP LIỆU: To và nổi bật */
         #numInput {
-            width: 50%;
-            max-width: 160px;
-            height: 75px; /* Giảm từ 100px */
-            font-size: 3.2rem; /* Giảm cỡ chữ */
+            width: 80%;
+            height: 80px;
+            font-size: 3.5rem;
             font-weight: bold;
             text-align: center;
             border: 3px solid #00d2ff;
-            border-radius: 12px;
+            border-radius: 15px;
             outline: none;
-            display: block;
-            margin: 0 auto 15px auto;
-            background: rgba(0, 0, 0, 0.4);
+            background: #000;
             color: #00d2ff;
-            box-shadow: 0 0 10px rgba(0, 210, 255, 0.2);
+            display: block;
+            margin: 0 auto 20px;
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.3);
         }
 
-        /* Kết quả 4 dòng: Thu nhỏ khoảng cách */
+        /* 4. KẾT QUẢ: Gọn gàng, dễ đọc */
         .result-container {
             text-align: left;
-            background: rgba(0, 0, 0, 0.25);
+            background: #252a33;
             border-radius: 10px;
             padding: 10px 15px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
-
         .result-line {
             display: flex;
-            padding: 7px 0; /* Giảm đệm dòng */
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            font-size: 1rem; /* Giảm cỡ chữ xuống 1rem */
+            padding: 10px 0;
+            border-bottom: 1px solid #333;
+            font-size: 1.1rem;
         }
         .result-line:last-child { border-bottom: none; }
-
-        .label { font-weight: bold; color: #90a4ae; width: 100px; flex-shrink: 0; }
+        .label { font-weight: bold; color: #888; width: 100px; flex-shrink: 0; }
         .value { color: #fff; }
 
-        /* Khu vực Copy thu gọn */
-        .copy-status { font-size: 0.9rem; color: #90a4ae; }
+        /* 5. Ô COPY: Rực rỡ */
         #lastNum {
-            font-size: 1.8rem; /* Thu nhỏ cỡ số copy */
+            font-size: 2.5rem;
             font-weight: bold;
-            color: #1a1c20;
+            color: #111;
             background: linear-gradient(135deg, #a8ff78 0%, #78ffd6 100%);
-            padding: 4px 20px;
-            border-radius: 8px;
+            padding: 5px 30px;
+            border-radius: 10px;
             display: inline-block;
-            margin-top: 5px;
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -86,13 +81,7 @@
 
 <div class="card">
     <h2>NHẬP SỐ</h2>
-    
-    <input type="text" id="numInput" 
-           maxlength="2" 
-           inputmode="numeric" 
-           placeholder="--" 
-           autofocus 
-           autocomplete="off">
+    <input type="text" id="numInput" maxlength="2" inputmode="numeric" autofocus autocomplete="off">
     
     <div class="result-container">
         <div class="result-line"><span class="label">Dòng 1:</span> <span class="value" id="line1">---</span></div>
@@ -101,70 +90,40 @@
         <div class="result-line"><span class="label">Dòng 4:</span> <span class="value" id="line4">---</span></div>
     </div>
 
-    <div class="copy-box">
-        <span class="copy-status">Đã copy:</span><br>
-        <span id="lastNum">--x</span>
-    </div>
+    <div style="color: #888;">Đã copy:</div>
+    <div id="lastNum">--x</div>
 </div>
 
 <script>
-    // Dữ liệu mẫu (Bạn tự thay d1-d4 theo ý mình)
     const DATA_MAP = {
         "00": { d1: "Lớn", d2: "Nhỏ", d3: "Bình thường", d4: "Ghi chú A" },
-        "01": { d1: "Sản phẩm A", d2: "10k", d3: "Kho 1", d4: "Sẵn hàng" },
-        "02": { d1: "Lớn", d2: "Nhỏ", d3: "Lớn", d4: "Lưu ý B" }
+        "01": { d1: "Sản phẩm A", d2: "10k", d3: "Kho 1", d4: "Sẵn hàng" }
     };
 
     const inputEl = document.getElementById('numInput');
-    const l1 = document.getElementById('line1');
-    const l2 = document.getElementById('line2');
-    const l3 = document.getElementById('line3');
-    const l4 = document.getElementById('line4');
+    const lines = [document.getElementById('line1'), document.getElementById('line2'), document.getElementById('line3'), document.getElementById('line4')];
     const lastNum = document.getElementById('lastNum');
 
     inputEl.addEventListener('input', function() {
         this.value = this.value.replace(/\D/g, '');
-
         if (this.value.length === 2) {
             const val = this.value;
             const data = DATA_MAP[val];
-
             if (data) {
-                l1.innerText = data.d1 || "---";
-                l2.innerText = data.d2 || "---";
-                l3.innerText = data.d3 || "---";
-                l4.innerText = data.d4 || "---";
+                lines[0].innerText = data.d1; lines[1].innerText = data.d2;
+                lines[2].innerText = data.d3; lines[3].innerText = data.d4;
             } else {
-                l1.innerText = "Không tìm thấy";
-                l2.innerText = "---"; l3.innerText = "---"; l4.innerText = "---";
+                lines.forEach(l => l.innerText = "---");
             }
 
-            const stringToCopy = val + "x";
-            lastNum.innerText = stringToCopy;
+            const copyStr = val + "x";
+            lastNum.innerText = copyStr;
+            navigator.clipboard.writeText(copyStr);
 
-            // Xử lý Copy
-            if (navigator.clipboard && window.isSecureContext) {
-                navigator.clipboard.writeText(stringToCopy);
-            } else {
-                const textArea = document.createElement("textarea");
-                textArea.value = stringToCopy;
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
-            }
-
-            // Xóa nhanh để nhập tiếp (150ms)
-            setTimeout(() => {
-                this.value = '';
-                this.focus();
-            }, 150);
+            setTimeout(() => { this.value = ''; this.focus(); }, 200);
         }
     });
-
-    // Luôn giữ focus
     document.addEventListener('click', () => inputEl.focus());
 </script>
-
 </body>
 </html>
