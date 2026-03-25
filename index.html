@@ -3,157 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hiện chuỗi</title>
+    <title>Tìm kiếm theo khối số</title>
     <style>
-        /* 1. ÉP BODY PHẢI RỘNG HẾT CỠ */
         html, body {
             margin: 0; padding: 0;
             width: 100%; min-height: 100vh;
             display: flex; justify-content: center;
             font-family: 'Segoe UI', sans-serif;
-            background: #101216; /* Nền tối hẳn */
+            background: #101216;
+            color: #fff;
         }
 
-        /* 2. KHUNG CARD: ÉP RỘNG 98% ĐỂ VIỀN NGOÀI BÉ TÍ */
-        .card {
-            background: #1c1f26; /* Màu xám đen sang trọng */
-            width: 98%;          /* Chiếm 98% chiều rộng màn hình */
-            max-width: 500px;    /* Chỉ giới hạn khi xem trên máy tính to */
-            margin: 10px auto;   /* Lề trên dưới 10px, căn giữa */
-            padding: 20px 10px;  /* Đệm bên trong */
-            border-radius: 12px;
-            box-sizing: border-box; /* Quan trọng: để không bị phình quá 100% */
-            border: 1px solid #333;
+        .container {
+            width: 98%;
+            max-width: 500px;
+            margin: 10px auto;
             text-align: center;
         }
 
-        h2 { margin: 0 0 15px 0; color: #fff; font-size: 1.2rem; text-transform: uppercase; }
+        /* Vùng tải file */
+        .file-upload {
+            background: #1c1f26;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px dashed #444;
+            margin-bottom: 20px;
+        }
+        input[type="file"] { font-size: 0.8rem; color: #888; }
 
-        /* 3. Ô NHẬP LIỆU: To và nổi bật */
+        /* Ô nhập số to giữa màn hình */
         #numInput {
             width: 80%;
             height: 80px;
             font-size: 3.5rem;
             font-weight: bold;
             text-align: center;
-            border: 3px solid #00d2ff;
+            border: 3px solid #ff4757;
             border-radius: 15px;
-            outline: none;
             background: #000;
-            color: #00d2ff;
-            display: block;
-            margin: 0 auto 20px;
-            box-shadow: 0 0 15px rgba(0, 210, 255, 0.3);
+            color: #ff4757;
+            outline: none;
+            margin-bottom: 20px;
+            box-shadow: 0 0 20px rgba(255, 71, 87, 0.2);
         }
 
-        /* 4. KẾT QUẢ: Gọn gàng, dễ đọc */
-        .result-container {
+        /* Khu vực hiển thị kết quả quét được */
+        #resultArea {
             text-align: left;
             background: #252a33;
-            border-radius: 10px;
-            padding: 10px 15px;
-            margin-bottom: 20px;
+            border-radius: 12px;
+            padding: 5px 15px;
+            display: none; /* Chỉ hiện khi có kết quả */
+            border: 1px solid #333;
         }
-        .result-line {
-            display: flex;
-            padding: 10px 0;
-            border-bottom: 1px solid #333;
-            font-size: 1.1rem;
-        }
-        .result-line:last-child { border-bottom: none; }
-        .label { font-weight: bold; color: #888; width: 100px; flex-shrink: 0; }
-        .value { color: #fff; }
 
-        /* 5. Ô COPY: Rực rỡ */
-        #lastNum {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #111;
-            background: linear-gradient(135deg, #a8ff78 0%, #78ffd6 100%);
-            padding: 5px 30px;
-            border-radius: 10px;
-            display: inline-block;
-            margin-top: 10px;
+        .result-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #383e4a;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.2rem;
+            letter-spacing: 1px;
         }
+        .result-item:last-child { border-bottom: none; }
+
+        /* Đánh dấu 2 số đầu dòng cho dễ nhìn */
+        .highlight { color: #ffbc00; font-weight: bold; }
+
+        .status-msg { color: #666; font-size: 0.8rem; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <h2>NHẬP SỐ</h2>
-    <input type="text" id="numInput" maxlength="2" inputmode="numeric" autofocus autocomplete="off">
-    
-    <div class="result-container">
-        <div class="result-line"><span class="label">Dòng 1:</span> <span class="value" id="line1">---</span></div>
-        <div class="result-line"><span class="label">Dòng 2:</span> <span class="value" id="line2">---</span></div>
-        <div class="result-line"><span class="label">Dòng 3:</span> <span class="value" id="line3">---</span></div>
-        <div class="result-line"><span class="label">Dòng 4:</span> <span class="value" id="line4">---</span></div>
+<div class="container">
+    <div class="file-upload">
+        <div style="margin-bottom: 10px; font-size: 0.9rem;">Nạp dữ liệu từ file .txt</div>
+        <input type="file" id="fileInput" accept=".txt">
     </div>
 
-    <div style="color: #888;">Đã copy:</div>
-    <div id="lastNum">--x</div>
+    <input type="text" id="numInput" maxlength="2" placeholder="--" inputmode="numeric" autofocus autocomplete="off">
+    
+    <div id="resultArea"></div>
+
+    <div class="status-msg" id="infoText">Vui lòng chọn file trước khi nhập</div>
 </div>
 
 <script>
-    const DATA_MAP = {
-"00": { d1: "x >= 5  => dùng Lớn", d2: "x < 5 => dùng Nhỏ", d3: "x", d4: "x" },    
-"01": { d1: "x >= 5  => dùng Lớn", d2: "x < 5 => dùng Nhỏ", d3: "x", d4: "x" },    
-"02": { d1: "x >= 5  => dùng Lớn", d2: "x < 5 => dùng Nhỏ", d3: "x=2  => dùng Lớn", d4: "x =7  => dùng Lớn" },    
-"03": { d1: "x >= 5  => dùng Lớn", d2: "x < 5 => dùng Nhỏ", d3: "x=2  => dùng Lớn", d4: "x =7  => dùng Nhỏ" },    
-"04": { d1: "x >= 5  => dùng Lớn", d2: "x < 5 => dùng Nhỏ", d3: "x=0  => dùng Lớn", d4: "x =9  => dùng Nhỏ" },    
-"05": { d1: "x >= 5  => dùng Nhỏ", d2: "x < 5 => dùng Lớn", d3: "x=1  => dùng Lớn", d4: "x =7  => dùng Lớn" },    
-"06": { d1: " dùng Lớn", d2: "dùng Lớn", d3: "x=3  => dùng Nhỏ", d4: "Qqq"},    
-"07": { d1: "dùng Lớn", d2: "x = 0 => dùng Nhỏ", d3: "Bình thường", d4: "Ghi chú A" },    
-"08": { d1: "x >= 5  => dùng Lớn", d2: "x < 5 => dùng Nhỏ", d3: "ggg", d4: "hhh"},    
-"09": { d1: "x >= 5  => dùng Lớn", d2: "x < 5 => dùng Nhỏ", d3: "x=8 => dùng Nhỏ", d4: "hhh"},    
-"10": { d1: "x >= 5  => dùng Lớn", d2: "x < 5 => dùng Nhỏ", d3: "x=5  => dùng Nhỏ", d4: "x =9  => dùng Nhỏ"},    
-"11": { d1: "x >= 5  => dùng Lớn", d2: "x < 5 => dùng Nhỏ", d3: "x=4  => dùng Lớn", d4: "x =9  => dùng Nhỏ" },    
-"12": { d1: "x >= 5  => dùng Lớn", d2: "x < 5 => dùng Nhỏ", d3: "x=6 => dùng  Lớn - Nhỏ - Nhỏ", d4: "hhh" },    
-"13": { d1: "x < 5  => dùng Lớn", d2: "x >= 5 => dùng Nhỏ", d3: "x=9  => dùng Lớn", d4: "hhh" },    
-"14": { d1: "x >= 5  => dùng Lớn", d2: "x < 5 => dùng Nhỏ", d3: "x=0  => dùng Lớn", d4: "x =4  => dùng Lớn" },    
-"15": { d1: "x >= 5  => dùng Nhỏ - Nhỏ - Lớn", d2: "x < 5 => dùng Nhỏ", d3: "qqq  => ", d4: "x =0  => dùng Nhỏ - Lớn - Nhỏ" },    
-"16": { d1: "x >= 5  => dùng Nhỏ", d2: "x < 5 => dùng Lớn", d3: "x=1  => dùng Lớn", d4: "  => qqq" },    
-"17": { d1: " dùng Lớn", d2: "=> dùng ", d3: "=> dùng ", d4: ".   " },    
-"18": { d1: "x >= 5  => dùng Nhỏ", d2: "x < 5 => dùng Lớn", d3: "x=8  => dùng Lớn", d4: "x =5  => dùng Nhỏ" },    
-"19": { d1: "x >= 5  => dùng Lớn", d2: "x < 5 => dùng Nhỏ", d3: "x=4  => dùng Lớn", d4: ".  " },    
-"20": { d1: "dùng Lớn", d2: "x = 3 => dùng Nhỏ", d3: ".  ", d4: ".  " },    
-"21": { d1: "dùng Lớn", d2: ".", d3: "x= 0 => dùng Nhỏ", d4: "x =9  => dùng Nhỏ" },    
-"22": { d1: "dùng Lớn - Nhỏ - Lớn -Lớn", d2: ".", d3: ".", d4: "." },    
-"23": { d1: " dùng Lớn", d2: ".", d3: "x=4  => dùng Nhỏ", d4: "x =6  => dùng Nhỏ" },    
-"24": { d1: "x >= 5  => dùng Lớn", d2: "x < 5 => dùng Nhỏ", d3: "x=00  => dùng Lớn", d4: "x =10  => dùng Lớn" },    
-"25": { d1: "x >= 5  => dùng Nhỏ", d2: "x < 5 => dùng Lớn", d3: "x=5  => dùng Lớn", d4: "x =0  => dùng Nhỏ" },    
-"26": { d1: "x >= 5  => dùng Lớn", d2: "x < 5 => dùng Nhỏ", d3: "x=98  => dùng Nhỏ", d4: "x =6  => dùng Nhỏ" },    
-"27": { d1: "x >= 5  => dùng Lớn", d2: "x < 5 => dùng Nhỏ", d3: ".", d4: "." },    
-"28": { d1: "x >= 5  => dùng Nhỏ", d2: "x < 5 => dùng Lớn", d3: "x=9 => dùng Lớn", d4: "." },    
-"29": { d1: "x >= 5  => dùng Lớn", d2: "x < 5 => dùng Nhỏ", d3: ".", d4: "." },    
-"30": { d1: "x >= 5  => dùng Lớn", d2: "x < 5 => dùng Nhỏ", d3: "x=4  => dùng Lớn", d4: "." }      
+    let allLines = []; // Lưu danh sách các dòng từ file
+    const fileInput = document.getElementById('fileInput');
+    const numInput = document.getElementById('numInput');
+    const resultArea = document.getElementById('resultArea');
+    const infoText = document.getElementById('infoText');
+
+    // 1. Đọc và xử lý file khi người dùng chọn
+    fileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const content = e.target.result;
+            // Tách file thành mảng các dòng, lọc bỏ dòng trống
+            allLines = content.split(/\r?\n/).filter(line => line.trim() !== "");
+            alert("Đã nạp thành công " + allLines.length + " dòng dữ liệu!");
+            infoText.innerText = "Dữ liệu sẵn sàng. Hãy nhập 2 số.";
+            numInput.focus();
+        };
+        reader.readAsText(file);
+    });
+
+    // 2. Xử lý logic khi nhập vào ô input
+    numInput.addEventListener('input', function() {
+        this.value = this.value.replace(/\D/g, ''); // Chỉ cho phép nhập số
         
-    };
+        const searchVal = this.value;
 
-    const inputEl = document.getElementById('numInput');
-    const lines = [document.getElementById('line1'), document.getElementById('line2'), document.getElementById('line3'), document.getElementById('line4')];
-    const lastNum = document.getElementById('lastNum');
-
-    inputEl.addEventListener('input', function() {
-        this.value = this.value.replace(/\D/g, '');
-        if (this.value.length === 2) {
-            const val = this.value;
-            const data = DATA_MAP[val];
-            if (data) {
-                lines[0].innerText = data.d1; lines[1].innerText = data.d2;
-                lines[2].innerText = data.d3; lines[3].innerText = data.d4;
-            } else {
-                lines.forEach(l => l.innerText = "---");
+        // Khi đã nhập đủ 2 chữ số
+        if (searchVal.length === 2) {
+            if (allLines.length === 0) {
+                alert("Bạn chưa nạp file dữ liệu!");
+                this.value = "";
+                return;
             }
 
-            const copyStr = val + "x";
-            lastNum.innerText = copyStr;
-            navigator.clipboard.writeText(copyStr);
+            // Tìm các dòng bắt đầu bằng searchVal
+            const matches = allLines.filter(line => line.trim().startsWith(searchVal));
 
-            setTimeout(() => { this.value = ''; this.focus(); }, 200);
+            if (matches.length > 0) {
+                resultArea.innerHTML = ""; // Xóa kết quả cũ
+                resultArea.style.display = "block";
+
+                matches.forEach(line => {
+                    const div = document.createElement('div');
+                    div.className = 'result-item';
+                    
+                    // Highlight 2 số đầu
+                    const prefix = line.substring(0, 2);
+                    const rest = line.substring(2);
+                    div.innerHTML = `<span class="highlight">${prefix}</span>${rest}`;
+                    
+                    resultArea.appendChild(div);
+                });
+
+                // Tự động copy "[Số]x" như yêu cầu cũ của bạn
+                const copyStr = searchVal + "x";
+                navigator.clipboard.writeText(copyStr).then(() => {
+                    infoText.innerHTML = `Đã tìm thấy ${matches.length} dòng. <b style="color:#00ff88">Copy: ${copyStr}</b>`;
+                });
+
+            } else {
+                resultArea.style.display = "none";
+                infoText.innerText = "Không tìm thấy khối: " + searchVal;
+            }
+
+            // Tự động xóa để nhập lượt mới sau 1 giây
+            setTimeout(() => {
+                this.value = "";
+                this.focus();
+            }, 1000);
         }
     });
-    document.addEventListener('click', () => inputEl.focus());
+
+    // Luôn giữ focus vào ô nhập
+    document.addEventListener('click', (e) => {
+        if (e.target !== fileInput) numInput.focus();
+    });
 </script>
+
 </body>
 </html>
