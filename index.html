@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trình Lọc Dãy Số MM-Ab-XXXXXX</title>
+    <title>Trình Lọc & Sắp Xếp Số</title>
     <style>
         :root {
             --bg-color: #0f0f0f;
@@ -26,7 +26,7 @@
 
         .container {
             width: 100%;
-            max-width: 650px;
+            max-width: 600px; /* Thu nhỏ lại cho phù hợp 1 cột */
             background: var(--card-bg);
             padding: 25px;
             border-radius: 15px;
@@ -48,7 +48,6 @@
             text-transform: uppercase;
         }
 
-        /* Nút Upload */
         input[type="file"] { display: none; }
         .upload-btn {
             display: inline-block;
@@ -57,169 +56,160 @@
             border: 1px solid #444;
             border-radius: 5px;
             cursor: pointer;
-            transition: 0.3s;
         }
-        .upload-btn:hover { border-color: var(--accent); background: #2a2a2a; }
 
-        /* Ô nhập số */
         #abInput {
             background: #000;
             border: 2px solid var(--border);
             color: var(--accent);
-            font-size: 3rem;
-            width: 130px;
+            font-size: 2.5rem;
+            width: 100px;
             text-align: center;
             border-radius: 10px;
             outline: none;
             display: block;
             margin: 0 auto;
         }
-        #abInput:focus { border-color: var(--accent); box-shadow: 0 0 15px rgba(0,230,118,0.2); }
 
-        /* Danh sách kết quả */
-        #result-list {
-            margin-top: 10px;
-            max-height: 500px;
+        .column {
+            background: #121212;
+            border: 1px solid #222;
+            border-radius: 8px;
+            height: 500px;
             overflow-y: auto;
-            border-top: 1px solid var(--border);
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        .column-title {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #888;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #222;
+            margin-bottom: 10px;
+            position: sticky;
+            top: 0;
+            background: #121212;
         }
 
         .row {
-            padding: 12px;
-            margin: 8px 0;
+            padding: 8px;
+            margin: 4px 0;
             background: #222;
-            border-radius: 6px;
-            font-size: 1.3rem;
+            border-radius: 4px;
+            font-size: 1.1rem;
             display: flex;
             justify-content: center;
             gap: 5px;
         }
 
-        .mm { color: #888; font-weight: bold; }
-        .ab { color: var(--accent); font-weight: bold; text-decoration: underline; }
-        .xxx { color: #fff; letter-spacing: 2px; }
+        .mm { color: #aaa; font-weight: bold; }
+        .ab { color: var(--accent); font-weight: bold; }
+        .xxx { color: #fff; }
         .sep { color: #444; }
 
-        .info { font-size: 0.8rem; color: #555; margin-top: 5px; text-align: center; }
+        .info { font-size: 0.8rem; color: #555; text-align: center; margin-top: 5px; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="section">
-        <div class="label">Bước 1: Tải file & Lưu dữ liệu</div>
+        <div class="label">Bước 1: Tải file dữ liệu</div>
         <label class="upload-btn">
-            Chọn file dữ liệu (.txt)
+            Chọn file (.txt)
             <input type="file" id="fileInput" accept=".txt">
         </label>
-        <div id="fileStatus" class="info">Chưa có dữ liệu trong LocalStorage.</div>
+        <div id="fileStatus" class="info">Chưa có dữ liệu.</div>
     </div>
 
     <div class="section">
-        <div class="label">Bước 2 & 3: Nhập 2 số (Ab)</div>
-        <input type="text" id="abInput" maxlength="2" placeholder="--" autocomplete="off">
-        <div class="info">Nhập đủ 2 số để tự động hiện kết quả</div>
+        <div class="label">Bước 2: Nhập số Ab</div>
+        <input type="text" id="abInput" maxlength="2" placeholder="00" autocomplete="off">
     </div>
 
-    <div id="result-list"></div>
+    <div class="column">
+        <div class="column-title">SẮP XẾP MM (BÉ → LỚN)</div>
+        <div id="list-sorted"></div>
+    </div>
 </div>
 
 <script>
     const fileInput = document.getElementById('fileInput');
     const abInput = document.getElementById('abInput');
-    const resultList = document.getElementById('result-list');
+    const listSorted = document.getElementById('list-sorted');
     const fileStatus = document.getElementById('fileStatus');
 
-    // Khởi tạo trang
     window.onload = () => {
-        const savedData = localStorage.getItem('fileContent');
-        if (savedData) {
-            fileStatus.innerText = "Dữ liệu đã sẵn sàng. Bạn có thể nhập số.";
-        }
-        abInput.focus(); // Tự động focus ô nhập
+        const saved = localStorage.getItem('fileContent');
+        if (saved) fileStatus.innerText = "Dữ liệu đã sẵn sàng.";
+        abInput.focus();
     };
 
-    // BƯỚC 1: Tải file và lưu LocalStorage
     fileInput.addEventListener('change', async (e) => {
         const file = e.target.files[0];
         if (!file) return;
-
         const text = await file.text();
-        // Nối tất cả thành 1 chuỗi số liên tục (xóa khoảng trắng, xuống dòng)
         const cleanData = text.replace(/\s+/g, '');
-        
         localStorage.setItem('fileContent', cleanData);
         fileStatus.innerText = `Đã lưu file: ${file.name}`;
-        
         abInput.focus();
         if (abInput.value.length === 2) performSearch(abInput.value);
     });
 
-    // BƯỚC 2 & 3: Nhập và tự động hiện kết quả
     abInput.addEventListener('input', (e) => {
-        let val = e.target.value.replace(/\D/g, ''); // Chỉ cho phép nhập số
+        let val = e.target.value.replace(/\D/g, '');
         e.target.value = val;
-
-        if (val.length === 2) {
-            performSearch(val);
-        } else {
-            resultList.innerHTML = '';
+        if (val.length === 2) performSearch(val);
+        else {
+            listSorted.innerHTML = '';
         }
     });
 
     function performSearch(targetAb) {
         const data = localStorage.getItem('fileContent');
-        if (!data) {
-            alert("Vui lòng tải file ở Bước 1 trước!");
-            return;
-        }
+        if (!data) return;
 
-        resultList.innerHTML = '';
-        let found = false;
+        listSorted.innerHTML = '';
+        let results = [];
 
-        // Quét dữ liệu theo phương pháp xét 10 số 1 lần (i += 10)
+        // Duyệt tìm dữ liệu
         for (let i = 0; i <= data.length - 10; i += 10) {
             const chunk = data.substring(i, i + 10);
-            
-            // Nếu cụm 10 số có chứa số Ab
             if (chunk.includes(targetAb)) {
-                found = true;
-                
-                // Xác định vị trí chính xác của Ab trong chuỗi tổng thể
-                const abPosInChunk = chunk.indexOf(targetAb);
-                const globalAbIndex = i + abPosInChunk;
+                const abPos = chunk.indexOf(targetAb);
+                const globalIdx = i + abPos;
 
-                // MM: 2 số phía trước Ab
-                const mm = data.substring(globalAbIndex - 2, globalAbIndex);
-                
-                // xxxxxx: 6 số phía sau Ab
-                const xxx = data.substring(globalAbIndex + 2, globalAbIndex + 8);
+                const mm = data.substring(globalIdx - 2, globalIdx);
+                const xxx = data.substring(globalIdx + 2, globalIdx + 8);
 
-                // Chỉ hiển thị nếu có đủ 2 số phía trước (tránh trường hợp Ab nằm ở đầu file)
                 if (mm.length === 2) {
-                    renderRow(mm, targetAb, xxx.padEnd(6, '-'));
+                    results.push({ mm, ab: targetAb, xxx: xxx.padEnd(6, '-') });
                 }
             }
         }
 
-        if (!found) {
-            resultList.innerHTML = `<div style="text-align:center; color:#444; padding:20px;">Không tìm thấy dãy nào phù hợp.</div>`;
-        }
+        // Sắp xếp theo MM từ bé đến lớn
+        const sortedResults = results.sort((a, b) => parseInt(a.mm) - parseInt(b.mm));
+        
+        // Hiển thị kết quả duy nhất vào cột Sorted
+        sortedResults.forEach(item => {
+            listSorted.appendChild(createRow(item));
+        });
     }
 
-    function renderRow(mm, ab, xxx) {
+    function createRow(item) {
         const div = document.createElement('div');
         div.className = 'row';
-        
-        // Định dạng: MM- Ab -xxxxxx
         div.innerHTML = `
-            <span class="mm">${mm}</span>
+            <span class="mm">${item.mm}</span>
             <span class="sep">-</span>
-            <span class="ab">${ab}</span>
+            <span class="ab">${item.ab}</span>
             <span class="sep">-</span>
-            <span class="xxx">${xxx}</span>
+            <span class="xxx">${item.xxx}</span>
         `;
-        resultList.appendChild(div);
+        return div;
     }
 </script>
 
