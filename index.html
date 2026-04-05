@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trình Lọc & Sắp Xếp Số</title>
+    <title>Trình Lọc Số Tự Động Copy</title>
     <style>
         :root {
             --bg-color: #0f0f0f;
@@ -26,7 +26,7 @@
 
         .container {
             width: 100%;
-            max-width: 600px; /* Thu nhỏ lại cho phù hợp 1 cột */
+            max-width: 600px;
             background: var(--card-bg);
             padding: 25px;
             border-radius: 15px;
@@ -58,24 +58,36 @@
             cursor: pointer;
         }
 
-        #abInput {
+        /* Group các ô nhập số */
+        .input-group {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .input-item { text-align: center; }
+
+        input[type="text"] {
             background: #000;
             border: 2px solid var(--border);
             color: var(--accent);
             font-size: 2.5rem;
-            width: 100px;
+            width: 120px;
             text-align: center;
             border-radius: 10px;
             outline: none;
             display: block;
-            margin: 0 auto;
         }
+
+        #abInput:focus { border-color: var(--accent); }
+        #copyDisplay { color: #ffeb3b; border-color: #444; } /* Ô copy có màu khác để phân biệt */
 
         .column {
             background: #121212;
             border: 1px solid #222;
             border-radius: 8px;
-            height: 500px;
+            height: 450px;
             overflow-y: auto;
             padding: 10px;
             margin-top: 10px;
@@ -125,8 +137,17 @@
     </div>
 
     <div class="section">
-        <div class="label">Bước 2: Nhập số Ab</div>
-        <input type="text" id="abInput" maxlength="2" placeholder="00" autocomplete="off">
+        <div class="input-group">
+            <div class="input-item">
+                <div class="label">Ô Nhập (2 số)</div>
+                <input type="text" id="abInput" maxlength="2" placeholder="--" autocomplete="off">
+            </div>
+            <div style="font-size: 2rem; color: #444;">→</div>
+            <div class="input-item">
+                <div class="label">Ô Đã Copy (Ab)</div>
+                <input type="text" id="copyDisplay" readonly placeholder="..">
+            </div>
+        </div>
     </div>
 
     <div class="column">
@@ -138,6 +159,7 @@
 <script>
     const fileInput = document.getElementById('fileInput');
     const abInput = document.getElementById('abInput');
+    const copyDisplay = document.getElementById('copyDisplay');
     const listSorted = document.getElementById('list-sorted');
     const fileStatus = document.getElementById('fileStatus');
 
@@ -155,26 +177,39 @@
         localStorage.setItem('fileContent', cleanData);
         fileStatus.innerText = `Đã lưu file: ${file.name}`;
         abInput.focus();
-        if (abInput.value.length === 2) performSearch(abInput.value);
     });
 
+    // XỬ LÝ CHÍNH: NHẬP -> COPY -> TÌM -> XÓA
     abInput.addEventListener('input', (e) => {
         let val = e.target.value.replace(/\D/g, '');
         e.target.value = val;
-        if (val.length === 2) performSearch(val);
-        else {
-            listSorted.innerHTML = '';
+
+        if (val.length === 2) {
+            // 1. Copy sang ô bên cạnh
+            copyDisplay.value = val;
+            
+            // 2. Thực hiện tìm kiếm với giá trị vừa copy
+            performSearch(val);
+            
+            // 3. Xóa ô nhập để sẵn sàng cho lần sau
+            // Dùng setTimeout một chút để người dùng kịp thấy số đã nhảy sang ô copy
+            setTimeout(() => {
+                abInput.value = '';
+            }, 100);
         }
     });
 
     function performSearch(targetAb) {
         const data = localStorage.getItem('fileContent');
-        if (!data) return;
+        if (!data) {
+            alert("Chưa có file dữ liệu!");
+            return;
+        }
 
         listSorted.innerHTML = '';
         let results = [];
 
-        // Duyệt tìm dữ liệu
+        // Duyệt tìm dữ liệu theo phương pháp 10 số 1 lần
         for (let i = 0; i <= data.length - 10; i += 10) {
             const chunk = data.substring(i, i + 10);
             if (chunk.includes(targetAb)) {
@@ -193,7 +228,11 @@
         // Sắp xếp theo MM từ bé đến lớn
         const sortedResults = results.sort((a, b) => parseInt(a.mm) - parseInt(b.mm));
         
-        // Hiển thị kết quả duy nhất vào cột Sorted
+        if (sortedResults.length === 0) {
+            listSorted.innerHTML = '<div class="info">Không tìm thấy dãy phù hợp.</div>';
+            return;
+        }
+
         sortedResults.forEach(item => {
             listSorted.appendChild(createRow(item));
         });
@@ -215,3 +254,4 @@
 
 </body>
 </html>
+
